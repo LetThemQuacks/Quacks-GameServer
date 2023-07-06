@@ -1,0 +1,4 @@
+class RoomsErrors:
+    ROOM_NOT_FOUND = 0
+    ROOM_LIMIT_REACHED = 1
+    INCORRECT_PASSWORD = 2
