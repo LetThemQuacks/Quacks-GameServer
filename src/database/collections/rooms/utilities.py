@@ -17,7 +17,7 @@ class RoomsDBUtils:
     @staticmethod
     def generate_unique_id(collection: Collection) -> str:
         ID = None
-        for repetitions in range(10):
+        for _ in range(10):
             ID = RoomsDBUtils._generate_id()
             if not collection.find_one({'custom_id': ID}):
                 break
