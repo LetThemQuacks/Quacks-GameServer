@@ -8,5 +8,8 @@ class Room:
         self.ROOM_ID = RoomsDBUtils.generate_unique_id()
         sock.route(f'/room/{self.ROOM_ID}')(self.handle) # TODO: Idk if this works 👍
 
-    def handle(self) -> None:
-        pass
+    def handle(self, ws) -> None:
+        print(type(ws))
+        while True:
+            data = ws.recv()
+            print(data)
