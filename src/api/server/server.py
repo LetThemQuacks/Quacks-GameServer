@@ -1,14 +1,14 @@
 from flask_sock import Sock
+from .client import WebSocketClient
 
-class WebsocketServer:
+class WebSocketServer:
     INSTANCE = None
-
-    def __new__(cls) -> object:
-        if not cls.INSTANCE:
-            cls.INSTANCE = super(WebsocketServer, cls).__new__(cls)
-        return cls.INSTANCE
+    rooms_instances = {} # id: instance
 
     def __init__(self, app) -> None:
+        if WebSocketServer.INSTANCE:
+            raise RuntimeError('WebsocketServer is a singletone object.')
+        WebSocketServer.INSTANCE = self
         self.app = app
 
     def setup_websocket(self) -> None:
@@ -16,5 +16,5 @@ class WebsocketServer:
             Setups the websocket server for the specified app.
         """
         self.sock = Sock(self.app)
-
+        self.sock.route('/room')(WebSocketClient)
 

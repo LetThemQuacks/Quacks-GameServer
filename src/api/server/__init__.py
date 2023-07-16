@@ -1,2 +1,2 @@
-from .server import WebsocketServer
+from .server import WebSocketServer
 

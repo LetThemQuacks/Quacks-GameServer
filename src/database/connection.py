@@ -14,6 +14,7 @@ class QuacksDatabase:
     DEFAULT_COLLECTIONS: list = ['rooms']
 
     def __init__(self) -> None:
+        logging.info('Connecting to the MongoDB Database...')
         self.connection = MongoClient(os.getenv('CONNECTION_URL'))
         self.init_database()
     

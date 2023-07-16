@@ -1,5 +1,5 @@
 from pymongo.collection import Collection
-from typing import Union
+from typing import Union, Tuple
 import functools
 import hmac
 
@@ -12,14 +12,14 @@ class RoomsCollection:
 
     def __init__(self, base_collection: Collection) -> None:
         if RoomsCollection.INSTANCE:
-            raise RuntimeError('RoomsCollection object is based on the singletone design pattern: it has already been initialized.')
+            raise RuntimeError('RoomsCollection is a singletone object.')
         RoomsCollection.INSTANCE = self
         self.collection = base_collection
 
     def create_room(self,
                     name: str,
                     password: Union[str, None] = None,
-                    max_joins: Union[int, None] = None):
+                    max_joins: Union[int, None] = None) -> Tuple[str, dict]:
         """
             Creates a room in the database and returns its ID
 
@@ -42,7 +42,7 @@ class RoomsCollection:
 
         self.collection.insert_one(mongodb_data)
 
-        return room_id + str(bool(password).real)
+        return room_id + str(bool(password).real), mongodb_data
 
     def _room_exists(self,
                     room_id: str,
@@ -85,3 +85,11 @@ class RoomsCollection:
         })
 
         return room_data
+
+    def list_rooms(self,
+                    filter_search: dict = {
+                        '_id': 0,
+                        'pwd': 0
+                    }) -> list:
+
+        return self.collection.find({}, filter_search)
