@@ -2,8 +2,9 @@ from flask import Flask, request, g
 
 from src.database.connection import QuacksDatabase
 from src.api.server import WebSocketServer
+from src.api.server.game.room import RoomServer
 from src.api.server.api.rooms import rooms
-
+from core import logging
 
 class Quacks:
     def __init__(self, app: Flask) -> None:
@@ -14,8 +15,13 @@ class Quacks:
         self.__init_database()
         self.__init_websocket()
         self.__init_blueprints()
+        
+        self.__restore_rooms()
 
         self.app.before_request(self.__before_request)
+
+        self.app.config['SOCK_SERVER_OPTIONS'] = {'ping_interval': 25}
+        logging.info('[yellow bold]Quacks[/] is [green italic]ready![/]')
 
     def __init_websocket(self) -> None:
         ws = WebSocketServer(self.app)
@@ -27,7 +33,22 @@ class Quacks:
     def __init_blueprints(self) -> None:
         self.app.register_blueprint(rooms)
 
-    def __before_request(self):
+    def __restore_rooms(self) -> None:
+        for room in self.db.rooms.list_rooms():
+            WebSocketServer.rooms_instances[room['custom_id']] = RoomServer(
+                WebSocketServer.INSTANCE.sock,
+                room_data=self.db.rooms._setup_room_data(
+                    room['custom_id'],
+                    room['name'],
+                    room.get('password'),
+                    room.get('max_joins')
+                )
+            )
+            logging.info(f'Room "{room["name"]}" has been succesfully restored')
+
+
+
+    def __before_request(self) -> None:
         if request.method in ('POST', 'DELETE', 'PATCH'):
             try:
                 g.data = request.get_json()

@@ -1,17 +1,21 @@
 import os
-import logging
+import logging as logging_module
 from dotenv import load_dotenv
+from rich.logging import RichHandler
 
 load_dotenv()
 
-level = logging.getLevelName(os.getenv('LOG_LEVEL', 'INFO'))
+level = logging_module.getLevelName(os.getenv('LOG_LEVEL', 'INFO'))
 
-logging.basicConfig(
+logging_module.basicConfig(
     level=level,
-    format= '[%(asctime)s] %(levelname)s - %(message)s',
-    datefmt='%H:%M:%S'
+    format= '%(message)s',
+    datefmt='%H:%M:%S',
+    handlers=[RichHandler(markup=True)]
 )
 
 # DO NOT change this if you don't know what you are doing.
 MAIN_SERVER: str = 'https://quacks-website.vercel.app'
+
+logging = logging_module.getLogger('rich')
 

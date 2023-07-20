@@ -1,8 +1,11 @@
-from flask import Flask
+from flask import Flask, cli
 from quacks import Quacks
+import os
+
+cli.show_server_banner = lambda *args, **kwargs: None
 
 app = Flask(__name__)
+Quacks(app)
 
 if __name__ == '__main__':
-    Quacks(app)
     app.run('0.0.0.0', 5000)
