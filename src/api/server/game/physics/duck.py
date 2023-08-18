@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Tuple
 
 
-@dataclass
+@dataclass()
 class Duck:
     """
         :Attributes:

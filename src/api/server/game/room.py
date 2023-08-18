@@ -1,9 +1,11 @@
 from flask_sock import Sock
-from typing import List
+from typing import List, Any, NewType
+from dataclasses import asdict
 import json
 
 from src.database.collections.rooms.utilities import RoomsDBUtils
-from src.api.server.client import WebSocketClient
+
+WebSocketClient = NewType('WebSocketClient', Any)
 
 class RoomServer:
     """
@@ -52,7 +54,12 @@ class RoomServer:
             'id': client.user_id,
         }}), (client,))
 
+    def user_movement(self, client: WebSocketClient):
+        self.broadcast(json.dumps({'type': 'move', 'data': {
+            'id': client.user_id,
+            'state': client.public_physics_state
+        }}))
+
     def online_dict(self, exclude: WebSocketClient = None):
-        """The online_dict property."""
         return [user.jsonify() for user in self.online_users if user != exclude]
 

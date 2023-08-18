@@ -2,11 +2,11 @@ from flask_sock import Sock
 from .client import WebSocketClient
 
 class WebSocketServer:
-    INSTANCE = None
+    INSTANCE: 'WebSocketServer'
     rooms_instances = {} # id: instance
 
     def __init__(self, app) -> None:
-        if WebSocketServer.INSTANCE:
+        if getattr(WebSocketServer, 'INSTANCE', None):
             raise RuntimeError('WebsocketServer is a singletone object.')
         WebSocketServer.INSTANCE = self
         self.app = app

@@ -1,0 +1,25 @@
+database:
+  database_name: "PublicQuacks"
+
+logging:
+  level: "DEBUG"
+
+room_creation:
+  allow: true # allow users to create rooms?
+
+  ratelimit:
+    # Each user can create a room every 5 seconds
+    enable: true
+    value: 5
+
+# ----------------------
+#   Security Configs
+# ----------------------
+
+hashing:
+  algorithm: 'sha3_512'
+  work_factors: 3
+
+  salt:
+    enable: true
+    length: 32

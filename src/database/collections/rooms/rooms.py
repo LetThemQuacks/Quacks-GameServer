@@ -1,17 +1,18 @@
 from pymongo.collection import Collection
 from typing import Union, Tuple
-import functools
-import hmac
 
-from src.database.collections.rooms.utilities import RoomsDBUtils
-from src.database.security.hashing import hash_password
-from src.database.errors import RoomsErrors
+from ..rooms.utilities import RoomsDBUtils
+from ...security.hashing import hash_password
+
+import quacks
+import functools
+import secrets
 
 class RoomsCollection:
-    INSTANCE = None
+    INSTANCE : 'RoomsCollection'
 
     def __init__(self, base_collection: Collection) -> None:
-        if RoomsCollection.INSTANCE:
+        if getattr(RoomsCollection, 'INSTANCE', None):
             raise RuntimeError('RoomsCollection is a singletone object.')
         RoomsCollection.INSTANCE = self
         self.collection = base_collection
@@ -43,16 +44,22 @@ class RoomsCollection:
             'custom_id': room_id
         }
 
-        RoomsDBUtils.insert_if_necessary(mongodb_data, 'password', password, process_function=hash_password)
+        if quacks.configs['hashing']['salt']['enable'] and password:
+            salt = secrets.token_urlsafe(quacks.configs['hashing']['salt']['length']).encode()
+        else:
+            salt = None
+
+        RoomsDBUtils.insert_if_necessary(mongodb_data, 'password', password, process_function=functools.partial(hash_password, salt=salt))
+        RoomsDBUtils.insert_if_necessary(mongodb_data, 'salt', salt)
         RoomsDBUtils.insert_if_necessary(mongodb_data, 'max_joins', max_joins)
-        
+
         return mongodb_data
 
 
     def list_rooms(self,
                     filter_search: dict = {
-                        '_id': 0,
-                        'pwd': 0
+                        '_id': 0                        
                     }) -> list:
 
         return list(self.collection.find({}, filter_search))
+

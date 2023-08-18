@@ -1,4 +1,4 @@
-from .handler import PacketHandler, QuickFilters
+from .handler import PacketHandler
 from ...client import WebSocketClient
 from ...server import WebSocketServer
 
@@ -15,6 +15,10 @@ def join_room(client: WebSocketClient, data: dict) -> None:
             'from_packet_type': 'join_room',
             'code': RoomsErrors.ROOM_NOT_FOUND
         }}))
+
+    if client.CURRENT_ROOM:
+        old_room = client.CURRENT_ROOM
+        old_room.user_left(client)
 
     room = WebSocketServer.rooms_instances[data.get('id')]
     room.user_join(client)

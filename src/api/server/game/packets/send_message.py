@@ -7,7 +7,7 @@ from src.database.errors import ChatErrors
 from core import logging
 from json import dumps
 
-@PacketHandler.handle(packet_type='send_message', filter=QuickFilters.in_room)
+@PacketHandler.handle(packet_type='send_message', filters=[QuickFilters.in_room])
 def broadcast_room_message(client: WebSocketClient, data: dict) -> None:
     if data.get('message', '').replace(' ', '') == '':
         return client.send(dumps({'type': 'error', 'data': {

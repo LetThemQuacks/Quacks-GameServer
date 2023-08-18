@@ -1,4 +1,4 @@
-from typing import Callable, Union
+from typing import Callable, Union, Any
 from pymongo.collection import Collection
 from core import logging
 import random
@@ -6,7 +6,7 @@ import string
 
 class RoomsDBUtils:
     @staticmethod
-    def insert_if_necessary(dictionary: dict, key: str, value: Union[str, None], process_function: Union[Callable, None] = None) -> None:
+    def insert_if_necessary(dictionary: dict, key: str, value: Any, process_function: Union[Callable, None] = None) -> None:
         if value is not None:
             dictionary.update({
                 key: (

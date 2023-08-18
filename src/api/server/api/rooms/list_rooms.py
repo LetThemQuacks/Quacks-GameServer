@@ -7,4 +7,8 @@ list_rooms = Blueprint('list_room_bp', __name__)
 @list_rooms.route('/', methods=['GET'])
 def list_rooms_endpoint():
     room_list = RoomsCollection.INSTANCE.list_rooms()
+
+    for room in room_list:
+        room['password'] = bool(room.get('password'))
+
     return {'rooms': room_list}

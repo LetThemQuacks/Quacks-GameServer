@@ -6,12 +6,17 @@ from src.api.server.game.room import RoomServer
 from src.api.server.api.rooms import rooms
 from core import logging
 
+import yaml
+
 class Quacks:
     def __init__(self, app: Flask) -> None:
         """
             Initialize the database and register all required blueprints on the given app.
         """
         self.app = app
+
+        self.__load_configs()
+
         self.__init_database()
         self.__init_websocket()
         self.__init_blueprints()
@@ -22,6 +27,10 @@ class Quacks:
 
         self.app.config['SOCK_SERVER_OPTIONS'] = {'ping_interval': 25}
         logging.info('[yellow bold]Quacks[/] is [green italic]ready![/]')
+
+    def __load_configs(self) -> None:
+        with open('configs.yml', 'r', encoding='utf-8') as file:
+            self.configs = yaml.safe_load_all(file)
 
     def __init_websocket(self) -> None:
         ws = WebSocketServer(self.app)
@@ -44,7 +53,7 @@ class Quacks:
                     room.get('max_joins')
                 )
             )
-            logging.info(f'Room "{room["name"]}" has been succesfully restored')
+            logging.info(f'Restored Room [blue]->[/] id: [cyan][i]{room["custom_id"]}[/][/] name: [green][i]{room["name"]}[/][/]')
 
 
 
