@@ -2,7 +2,9 @@ from ...crypto_algorithms.RSA import RSACipher
 from ...crypto_algorithms.AES import AESCipher
 from ...client import WebSocketClient
 
-from .handler import PacketHandler 
+from ....bigboy.integrity import BigBoy
+
+from .handler import PacketHandler, PacketsPhases
 
 from secrets import token_urlsafe
 from core import logging
@@ -10,7 +12,7 @@ import json
 import time
 import secrets
 
-@PacketHandler.handle(packet_type='client_rsa')
+@PacketHandler.handle(packet_type='client_rsa', working_phase=PacketsPhases.PRE_CRYPTO)
 def setup_client_cryptography(client: WebSocketClient, data: dict) -> None:
     if client.RSA_INSTANCE and client.AES_INSTANCE:
         return logging.warning(f'{client.addr} Tried to retrive a new AES key.')
@@ -34,8 +36,8 @@ def setup_client_cryptography(client: WebSocketClient, data: dict) -> None:
 
     client.RSA_INSTANCE = RSA_INSTANCE
     client.AES_INSTANCE = AESCipher(AES_KEY)
+    client.INTEGRITY.update({'aes': AES_KEY, 'rsa': data.get('rsa_key')})
+    client.phase = PacketsPhases.PRE_SAID
 
     logging.info(f'Client Cryptography setup required {time.time() - client.start_time} seconds')
-
-    client.setup_user_info(f'Poul-{secrets.token_urlsafe(2)}', 'yellow')
 

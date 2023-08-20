@@ -3,6 +3,7 @@ from pymongo.database import Database
 
 from dotenv import load_dotenv
 from core import logging
+from configs import configs
 
 from src.database.collections.rooms.rooms import RoomsCollection
 
@@ -12,6 +13,7 @@ load_dotenv()
 
 class QuacksDatabase:
     DEFAULT_COLLECTIONS: list = ['rooms']
+    rooms: RoomsCollection
 
     def __init__(self) -> None:
         logging.info('Connecting to the MongoDB Database...')
@@ -25,8 +27,10 @@ class QuacksDatabase:
 
         logging.info('Initializing DataBase')
 
-        self.database: Database = self.connection[os.getenv('DATABASE_NAME')]
+        self.database: Database = self.connection[configs['database']['db_name']]
         self.init_collections()
+
+
 
     def init_collections(self) -> bool:
         """

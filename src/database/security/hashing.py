@@ -1,14 +1,16 @@
 from typing import Callable, Union
 import hashlib
 
-import quacks
+from configs import configs
 
 def hash_password(password: str,
                   salt: Union[bytes, None] = None,
         ) -> str:
 
-    work_factors = quacks.configs['hashing']['work_factors']
-    hashing_function = getattr(hashlib, quacks.configs['hashing']['algorithm'])
+    print(f'Hashing password {password}')
+
+    work_factors = configs['hashing']['work_factors']
+    hashing_function = getattr(hashlib, configs['hashing']['algorithm'])
 
     result_hash: bytes = password.encode()
     for _ in range(work_factors):

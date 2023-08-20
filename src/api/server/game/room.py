@@ -5,8 +5,6 @@ import json
 
 from src.database.collections.rooms.utilities import RoomsDBUtils
 
-WebSocketClient = NewType('WebSocketClient', Any)
-
 class RoomServer:
     """
         In-game WebSocket Server for a single Room.
@@ -40,26 +38,26 @@ class RoomServer:
             if client in exceptions: continue
             client.send(data)
 
-    def user_join(self, client: WebSocketClient):
-        self.online_users.append(client)
+    def user_join(self, client):
         self.broadcast(json.dumps({'type': 'user_join', 'data': {
             'username': client.username,
             'id': client.user_id,
             'skin': client.skin
         }}), (client,))
+        self.online_users.append(client)
 
-    def user_left(self, client: WebSocketClient):
+    def user_left(self, client):
         self.online_users.remove(client)
         self.broadcast(json.dumps({'type': 'user_left', 'data': {
             'id': client.user_id,
         }}), (client,))
 
-    def user_movement(self, client: WebSocketClient):
+    def user_movement(self, client):
         self.broadcast(json.dumps({'type': 'move', 'data': {
             'id': client.user_id,
             'state': client.public_physics_state
         }}))
 
-    def online_dict(self, exclude: WebSocketClient = None):
+    def online_dict(self, exclude = None):
         return [user.jsonify() for user in self.online_users if user != exclude]
 

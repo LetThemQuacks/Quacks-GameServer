@@ -2,13 +2,19 @@ import threading
 import websocket
 import sys
 import json
+import requests
+
+from rich import print
 
 from crypto_algorithms.AES import AESCipher
 from crypto_algorithms.RSA import RSACipher
 
 AES_INSTANCE: AESCipher = None
 RSA_INSTANCE: RSACipher = None
+public_rsa = None
 
+
+BIG_BOY_API = 'http://127.0.0.1:5050'
 
 def custom_packets(ws):
     while True:
@@ -23,7 +29,7 @@ def custom_packets(ws):
             ws.send(AES_INSTANCE.encrypt(data))
 
 def on_message(ws, message):
-    global AES_INSTANCE
+    global AES_INSTANCE, public_rsa
 
     print()
     if AES_INSTANCE:
@@ -32,36 +38,55 @@ def on_message(ws, message):
         return
 
     data = json.loads(message)
-    print(data)
-    print('PACKET >> ')
+    sys.stdout.write("\033[F")
     if data['type'] == 'server_aes':
         aes_key = RSA_INSTANCE.decrypt(data['data']['aes_key'])
-        print('AES KEY', aes_key)
+
+        print(public_rsa)
+
+        response = requests.post(
+            BIG_BOY_API + '/said/new',
+            json = {
+                'aes': aes_key.decode('utf-8'),
+                'rsa': public_rsa
+            }
+        ).json()
+        said = response['said']
+        
+        said_packet = {
+            'type': 'said',
+            'data': {
+                'said': said
+            }
+        }
+
         AES_INSTANCE = AESCipher(aes_key.decode('utf-8'))
-        #ws.send(AES_INSTANCE.encrypt(json.dumps({'type': 'move', 'data': {
-        #    'direction': (-1, 0)
-        #}})))
+
+        ws.send(AES_INSTANCE.encrypt(json.dumps(said_packet)))
 
         t = threading.Thread(target=custom_packets, args=(ws,))
         t.daemon = True
         t.start()
+    else:
+        print(data)
 
 def on_error(ws, error):
     print(error)
  
 def on_close(ws, close_status_code, close_msg):
-    print("### closed ###")
+    print("\n[red]########## WEBSOCKET CLOSED ##########[/]")
+    print(f'{close_status_code = }')
+    print(f'{close_msg = }')
 
 def on_open(ws):
-    global RSA_INSTANCE
+    global RSA_INSTANCE, public_rsa
 
     private, public = RSACipher.generateKeys(3072)
+    public_rsa = public
     RSA_INSTANCE = RSACipher(private, public)
     data = json.dumps({'type': 'client_rsa', 'data': {
         'rsa_key': public
     }})
-    print('*** SENDING')
-    print(data)
     ws.send(data)
 
 if __name__ == "__main__":
@@ -69,7 +94,7 @@ if __name__ == "__main__":
         room_id = sys.argv[-1]
         print(f'* Using room ID {room_id} from args')
     else:
-        room_id = input('Please enter a room ID: ')
+        room_id = 'null'
 
     print(f'Connecting to ws://127.0.0.1:5000/room?id={room_id}')
     websocket.enableTrace(False)

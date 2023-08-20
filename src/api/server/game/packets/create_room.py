@@ -9,17 +9,33 @@ from .....api.server.game.room import RoomServer
 from core import logging
 from json import dumps
 
-import quacks
+from configs import configs
+import time
  
+def check_ratelimit(start: float, end: float) -> bool:
+    """
+        Returns True if the ratelimit has been reached, otherwise retuns False
+    """
+    return (end - start) < configs['room_creation']['ratelimit']['value']
+
+
 @PacketHandler.handle(packet_type='create_room', filters=[QuickFilters.any_null_value])
 def create_room(client: WebSocketClient, data: dict) -> None:
-    if not quacks.configs['room_creation']['allow']:
+    if not configs['room_creation']['allow']:
         return client.send(dumps({'type': 'error', 'data': {
             'from_packet_type': 'create_room',
             'code': RoomsErrors.ROOM_CREATION_NOT_ALLOWED
         }}))
 
-    logging.info(f'Creating room "{data.get("name")}"')
+    if configs['room_creation']['ratelimit']['enable'] and check_ratelimit(client.last_room_created, time.time()):
+        return client.send(dumps({'type': 'error', 'data': {
+            'from_packet_type': 'create_room',
+            'code': RoomsErrors.RATELIMIT_REACHED,
+            'wait': configs['room_creation']['ratelimit']['value'] - (time.time() - client.last_room_created)
+        }}))
+
+
+    logging.info(f'Creating room "{data.get("name")}" author: ({client.user_id}) {client.username} ')
 
     room_id, room_data = RoomsCollection.INSTANCE.create_room(data['name'], data.get('password'), data.get('max_join'))
 
@@ -34,3 +50,4 @@ def create_room(client: WebSocketClient, data: dict) -> None:
         'id': room_id
     }}))
 
+    client.last_room_created = time.time()
