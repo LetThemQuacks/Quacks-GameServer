@@ -13,7 +13,7 @@ __MAIN_SERVER: str = 'https://quacks-website.vercel.app'
 __DEVELOPMENT_SERVER: str = 'https://quacks-nightly.vercel.app'
 __LOCAL_SERVER: str = 'http://127.0.0.1:5050'
 
-ACTIVE_SERVER = __LOCAL_SERVER
+ACTIVE_SERVER = __DEVELOPMENT_SERVER
 
 # Logging Setup
 #level = logging_module.getLevelName(os.getenv('LOG_LEVEL', 'INFO'))

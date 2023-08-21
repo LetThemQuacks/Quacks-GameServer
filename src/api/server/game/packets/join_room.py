@@ -7,14 +7,12 @@ from src.database.errors import RoomsErrors
 from core import logging
 from json import dumps
 
- 
+from ....utilities import APIUtils
+
 @PacketHandler.handle(packet_type='join_room')
-def join_room(client: WebSocketClient, data: dict) -> None:
+def join_room(client: WebSocketClient, data: dict) -> dict:
     if not data.get('id') in WebSocketServer.rooms_instances:
-        return client.send(dumps({'type': 'error', 'data': {
-            'from_packet_type': 'join_room',
-            'code': RoomsErrors.ROOM_NOT_FOUND
-        }}))
+        return APIUtils.error('join_room', RoomsErrors.ROOM_NOT_FOUND)
 
     if client.CURRENT_ROOM:
         old_room = client.CURRENT_ROOM
@@ -24,7 +22,9 @@ def join_room(client: WebSocketClient, data: dict) -> None:
     room.user_join(client)
     client.CURRENT_ROOM = room
 
-    client.send(dumps({'type': 'join_confirm', 'data': {
+    logging.info(f'{client.username} ({client.user_id}) has joined {room.ROOM_DATA["name"]} ({room.ROOM_ID})')
+
+    return {'type': 'join_confirm', 'data': {
         'online': room.online_dict(exclude=client),
         'position': [0, 0]
-    }}))
+        }}

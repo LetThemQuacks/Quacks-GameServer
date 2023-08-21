@@ -5,6 +5,8 @@ from ....bigboy.integrity import BigBoy
 from .handler import PacketHandler, PacketsPhases
 from .....database.errors import CryptoErrors
 
+from ....utilities import APIUtils
+
 from json import dumps
 from core import logging
 
@@ -26,9 +28,6 @@ def check_client_server_access_id(client: WebSocketClient, data: dict) -> None:
         client.setup_user_info(**intact_response['profile'])
     else:
         logging.warning(f'{client.addr} failed the SAID check, something suspicious is going on')
-        client.send(dumps({'type': 'error', 'data': {
-            'from_packet_type': 'said',
-            'code': CryptoErrors.INTEGRITY_CHECK_FAILED
-        }}))
+        client.send(dumps(APIUtils.error('said', CryptoErrors.INTEGRITY_CHECK_FAILED)))
         client.ws.close()
 

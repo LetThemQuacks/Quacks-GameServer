@@ -29,7 +29,10 @@ class WebSocketClient:
     AES_INSTANCE: Union[AESCipher, None]  = None
     CURRENT_ROOM: Union[RoomServer, None] = None
     INTEGRITY: dict = {'aes': None, 'rsa': None, 'said': None, 'intact': False}
+
     connected = True
+    last_room_created = 0
+    phase = PacketsPhases.PRE_CRYPTO
 
     def __init__(self, ws: Server):
         self.ws = ws
@@ -37,9 +40,6 @@ class WebSocketClient:
         self.args = request.args
         self.start_time = time.time()
         self.duck = Duck()
-        self.phase = PacketsPhases.PRE_CRYPTO
-
-        self.last_room_created = 0
 
         logging.info(f'WS Client Connected from {self.addr}')
         logging.debug(f'WebSocket Connection Arguments: {self.args}')
@@ -68,13 +68,13 @@ class WebSocketClient:
 
     def _call_callback(self, callback, packet: Packet) -> None:
         logging.debug(f'Calling callback {callback.get("callback")}')
-        callback.get('callback')(self, packet.get('data', {}))
+        return callback.get('callback')(self, packet.get('data', {}))
 
     def _call_callback_with_filters(self, callback, packet: Packet) -> None:
         filter_check = self._check_filters(callback['filters'], packet)
 
         if filter_check:
-            self._call_callback(callback, packet)
+            return self._call_callback(callback, packet)
         else:
             logging.warning(f'Callback "{packet["type"]}" not called [cyan]<-[/] filters check: {filter_check}')
 
@@ -96,9 +96,12 @@ class WebSocketClient:
             return logging.warning(f'{self.addr} ([i]phase {self.phase}[/]) tried to call [cyan]{packet["type"]}[/] ([i]phase {callback["wphase"]}[/])')
 
         if callback.get('filters'):
-            self._call_callback_with_filters(callback, packet)
+            response = self._call_callback_with_filters(callback, packet)
         else:
-            self._call_callback(callback, packet)
+            response = self._call_callback(callback, packet)
+
+        if isinstance(response, dict):
+            self.send(json.dumps(response))
 
 
     def load_packet_json(self, string: Union[str, None]) -> Packet:

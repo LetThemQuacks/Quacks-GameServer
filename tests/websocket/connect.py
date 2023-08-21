@@ -14,7 +14,7 @@ RSA_INSTANCE: RSACipher = None
 public_rsa = None
 
 
-BIG_BOY_API = 'http://127.0.0.1:5050'
+BIG_BOY_API = 'https://quacks-nightly.vercel.app/api'
 
 def custom_packets(ws):
     while True:
@@ -49,8 +49,12 @@ def on_message(ws, message):
             json = {
                 'aes': aes_key.decode('utf-8'),
                 'rsa': public_rsa
+            },
+            cookies={
+                'session': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiVHJhcGEiLCJfaWQiOiI2NDQxYWU3MTA3NmE5NTE1MDlmMDJmNjYifSwiaWF0IjoxNjkyNTc1NzI5LCJleHAiOjE2OTI2NjIxMjl9.VfJgp_fH0c895dRe4kKTK_JTNRkfxO6XSE_83xrRfM8'
             }
         ).json()
+        print(response)
         said = response['said']
         
         said_packet = {

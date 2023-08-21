@@ -6,6 +6,9 @@ from .....database.collections.rooms.rooms import RoomsCollection
 from .....database.errors import RoomsErrors
 from .....api.server.game.room import RoomServer
 
+
+from ....utilities import APIUtils
+
 from core import logging
 from json import dumps
 
@@ -20,19 +23,16 @@ def check_ratelimit(start: float, end: float) -> bool:
 
 
 @PacketHandler.handle(packet_type='create_room', filters=[QuickFilters.any_null_value])
-def create_room(client: WebSocketClient, data: dict) -> None:
+def create_room(client: WebSocketClient, data: dict) -> dict:
     if not configs['room_creation']['allow']:
-        return client.send(dumps({'type': 'error', 'data': {
-            'from_packet_type': 'create_room',
-            'code': RoomsErrors.ROOM_CREATION_NOT_ALLOWED
-        }}))
+        return APIUtils.error('create_room', RoomsErrors.ROOM_CREATION_NOT_ALLOWED)
 
     if configs['room_creation']['ratelimit']['enable'] and check_ratelimit(client.last_room_created, time.time()):
-        return client.send(dumps({'type': 'error', 'data': {
-            'from_packet_type': 'create_room',
-            'code': RoomsErrors.RATELIMIT_REACHED,
-            'wait': configs['room_creation']['ratelimit']['value'] - (time.time() - client.last_room_created)
-        }}))
+        return APIUtils.error(
+            'create_room',
+            RoomsErrors.RATELIMIT_REACHED,
+            wait = configs['room_creation']['ratelimit']['value'] - (time.time() - client.last_room_created)
+        )
 
 
     logging.info(f'Creating room "{data.get("name")}" author: ({client.user_id}) {client.username} ')
@@ -44,10 +44,10 @@ def create_room(client: WebSocketClient, data: dict) -> None:
             room_data=room_data
         )
 
-    client.send(dumps({'type': 'create_confirm', 'data': {
+    client.last_room_created = time.time()
+
+    return {'type': 'create_confirm', 'data': {
         'position': [0, 0],
         'name': data.get('name'),
         'id': room_id
-    }}))
-
-    client.last_room_created = time.time()
+    }}

@@ -6,7 +6,7 @@ class BigBoy:
     # SAID: Server Accedd ID
     @staticmethod
     def check_aes_and_rsa_integrity(aes: str, rsa: str, said: str, **kwargs) -> dict:
-        response = requests.post(ACTIVE_SERVER + '/said/integrity', json={
+        response = requests.post(ACTIVE_SERVER + '/api/said/integrity', json={
             'rsa': rsa,
             'aes': aes,
             'said': said

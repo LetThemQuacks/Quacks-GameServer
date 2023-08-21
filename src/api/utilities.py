@@ -22,12 +22,13 @@ class APIUtils:
         return True
 
     @staticmethod
-    def compile_error(message: str, error_type: str, status_code: int = 400) -> Tuple[Error, int]:
+    def error(from_packet_type: str, error_code: str, **additional_data: dict) -> dict:
         """
-            Returns a formatted error.
-
-            :Arguments:
-            - `message`: The error message
-            - `error_type`: The type of the error. accepted values: "debug", "user"
+            Create a Quacks error using the packet type and the error code
         """
-        return {'err': 1, 'type': error_type, 'msg': message}, status_code
+        data = {
+            'from_packet_type': from_packet_type,
+            'code': error_code
+        }
+        data.update(additional_data)
+        return {'type': 'error', 'data': data}
