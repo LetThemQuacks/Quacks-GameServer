@@ -45,6 +45,7 @@ class RoomServer:
             'skin': client.skin
         }}), (client,))
         self.online_users.append(client)
+        client.CURRENT_ROOM = self
 
     def user_left(self, client):
         self.online_users.remove(client)
@@ -61,3 +62,14 @@ class RoomServer:
     def online_dict(self, exclude = None):
         return [user.jsonify() for user in self.online_users if user != exclude]
 
+    def __iter__(self):
+        self.clients_iteration_index = 0
+        return self
+
+    def __next__(self):
+        if self.clients_iteration_index >= len(self.online_users):
+            raise StopIteration
+
+        client = self.online_users[self.clients_iteration_index]
+        self.clients_iteration_index += 1
+        return client

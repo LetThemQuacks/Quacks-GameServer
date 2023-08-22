@@ -162,3 +162,10 @@ class WebSocketClient:
         state.pop('max_velocity')
         state.pop('radius')
         return state
+
+    def __eq__(self, value):
+        if isinstance(value, str):
+            return value == self.user_id
+        elif isinstance(value, WebSocketClient):
+            return super().__eq__(value)
+

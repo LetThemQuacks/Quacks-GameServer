@@ -4,7 +4,7 @@ import sys
 import json
 import requests
 
-from rich import print
+#from rich import print
 
 from crypto_algorithms.AES import AESCipher
 from crypto_algorithms.RSA import RSACipher
@@ -31,13 +31,14 @@ def custom_packets(ws):
 def on_message(ws, message):
     global AES_INSTANCE, public_rsa
 
-    print()
+
     if AES_INSTANCE:
         data = AES_INSTANCE.decrypt(message)
-        print(data)
+        print('crypted:', data)
         return
 
     data = json.loads(message)
+    print('raw:', message)
     sys.stdout.write("\033[F")
     if data['type'] == 'server_aes':
         aes_key = RSA_INSTANCE.decrypt(data['data']['aes_key'])
@@ -51,7 +52,7 @@ def on_message(ws, message):
                 'rsa': public_rsa
             },
             cookies={
-                'session': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiVHJhcGEiLCJfaWQiOiI2NDQxYWU3MTA3NmE5NTE1MDlmMDJmNjYifSwiaWF0IjoxNjkyNTc1NzI5LCJleHAiOjE2OTI2NjIxMjl9.VfJgp_fH0c895dRe4kKTK_JTNRkfxO6XSE_83xrRfM8'
+                'session': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiVHJhcGEiLCJfaWQiOiI2NDQxYWU3MTA3NmE5NTE1MDlmMDJmNjYifSwiaWF0IjoxNjkyNjM3MTQzLCJleHAiOjE2OTI3MjM1NDN9.Q3LxcMsr6HKzeibW7LjzDTF1ef8CSlZ_uWkgFKuLEt4'
             }
         ).json()
         print(response)
@@ -66,6 +67,7 @@ def on_message(ws, message):
 
         AES_INSTANCE = AESCipher(aes_key.decode('utf-8'))
 
+        print(f'send: {json.dumps(said_packet)}')
         ws.send(AES_INSTANCE.encrypt(json.dumps(said_packet)))
 
         t = threading.Thread(target=custom_packets, args=(ws,))

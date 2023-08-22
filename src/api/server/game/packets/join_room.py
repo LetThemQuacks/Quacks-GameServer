@@ -14,13 +14,19 @@ def join_room(client: WebSocketClient, data: dict) -> dict:
     if not data.get('id') in WebSocketServer.rooms_instances:
         return APIUtils.error('join_room', RoomsErrors.ROOM_NOT_FOUND)
 
+    room = WebSocketServer.rooms_instances[data.get('id')]
+
+    if client in room:
+        return APIUtils.error('join_room', RoomsErrors.ALREADY_CONNECTED)
+
+    if client.user_id in room:
+        return APIUtils.error('join_room', RoomsErrors.ANOTHER_SESSION_CONNECTED)
+
     if client.CURRENT_ROOM:
         old_room = client.CURRENT_ROOM
         old_room.user_left(client)
 
-    room = WebSocketServer.rooms_instances[data.get('id')]
     room.user_join(client)
-    client.CURRENT_ROOM = room
 
     logging.info(f'{client.username} ({client.user_id}) has joined {room.ROOM_DATA["name"]} ({room.ROOM_ID})')
 

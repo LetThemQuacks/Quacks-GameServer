@@ -6,6 +6,10 @@ from ....bigboy.integrity import BigBoy
 
 from .handler import PacketHandler, PacketsPhases
 
+from src.database.errors import CryptoErrors
+from ....utilities import APIUtils
+
+from typing import Union
 from secrets import token_urlsafe
 from core import logging
 import json
@@ -13,7 +17,7 @@ import time
 import secrets
 
 @PacketHandler.handle(packet_type='client_rsa', working_phase=PacketsPhases.PRE_CRYPTO)
-def setup_client_cryptography(client: WebSocketClient, data: dict) -> None:
+def setup_client_cryptography(client: WebSocketClient, data: dict) -> Union[dict, None]:
     if client.RSA_INSTANCE and client.AES_INSTANCE:
         return logging.warning(f'{client.addr} Tried to retrive a new AES key.')
 
@@ -26,7 +30,7 @@ def setup_client_cryptography(client: WebSocketClient, data: dict) -> None:
     except Exception as e:
         logging.critical(f'Failed to encrypt with RSA the AES256 key for {client.addr}')
         logging.critical(f'Encryption Error: {e}')
-        return 
+        return APIUtils.error('client_rsa', CryptoErrors.RSA_ENCRYPTION_FAILED)
     else:
         logging.debug('RSA layer succesfully applied on the AES key')
 
