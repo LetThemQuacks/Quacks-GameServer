@@ -2,6 +2,7 @@ import threading
 import websocket
 import sys
 import json
+import time
 import requests
 
 #from rich import print
@@ -41,7 +42,9 @@ def on_message(ws, message):
     print('raw:', message)
     sys.stdout.write("\033[F")
     if data['type'] == 'server_aes':
-        aes_key = RSA_INSTANCE.decrypt(data['data']['aes_key'])
+        aes_key = b''
+        for key_part in data['data']['aes_key']:
+            aes_key += RSA_INSTANCE.decrypt(key_part)
 
         print(public_rsa)
 
@@ -87,9 +90,12 @@ def on_close(ws, close_status_code, close_msg):
 def on_open(ws):
     global RSA_INSTANCE, public_rsa
 
-    private, public = RSACipher.generateKeys(2560)
+    t = time.time()
+    private, public = RSACipher.generateKeys(1024)
+    print(f'RSA key generation took {time.time() - t} seconds')
     public_rsa = public
     RSA_INSTANCE = RSACipher(private, public)
+    print(public)
     data = json.dumps({'type': 'client_rsa', 'data': {
         'rsa_key': public
     }})
