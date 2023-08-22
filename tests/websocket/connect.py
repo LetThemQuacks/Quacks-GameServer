@@ -87,7 +87,7 @@ def on_close(ws, close_status_code, close_msg):
 def on_open(ws):
     global RSA_INSTANCE, public_rsa
 
-    private, public = RSACipher.generateKeys(3072)
+    private, public = RSACipher.generateKeys(2560)
     public_rsa = public
     RSA_INSTANCE = RSACipher(private, public)
     data = json.dumps({'type': 'client_rsa', 'data': {

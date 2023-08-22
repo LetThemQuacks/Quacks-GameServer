@@ -22,7 +22,7 @@ def setup_client_cryptography(client: WebSocketClient, data: dict) -> Union[dict
         return logging.warning(f'{client.addr} Tried to retrive a new AES key.')
 
     RSA_INSTANCE = RSACipher(publicKey=data.get('rsa_key'))
-    AES_KEY = secrets.token_urlsafe(256)
+    AES_KEY = secrets.token_urlsafe(256)[:256]
     
     logging.debug(f'Encrypting connection AES-256 key with RSA')
     try:
