@@ -42,9 +42,7 @@ def on_message(ws, message):
     print('raw:', message)
     sys.stdout.write("\033[F")
     if data['type'] == 'server_aes':
-        aes_key = b''
-        for key_part in data['data']['aes_key']:
-            aes_key += RSA_INSTANCE.decrypt(key_part)
+        aes_key = RSA_INSTANCE.decrypt(data['data']['aes_key'])
 
         print(public_rsa)
 
@@ -91,7 +89,7 @@ def on_open(ws):
     global RSA_INSTANCE, public_rsa
 
     t = time.time()
-    private, public = RSACipher.generateKeys(1024)
+    private, public = RSACipher.generateKeys(1354)
     print(f'RSA key generation took {time.time() - t} seconds')
     public_rsa = public
     RSA_INSTANCE = RSACipher(private, public)

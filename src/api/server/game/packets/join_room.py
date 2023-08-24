@@ -7,7 +7,7 @@ from src.database.errors import RoomsErrors
 from core import logging
 from json import dumps
 
-from ....utilities import APIUtils
+from src.api.utilities import APIUtils
 
 @PacketHandler.handle(packet_type='join_room')
 def join_room(client: WebSocketClient, data: dict) -> dict:

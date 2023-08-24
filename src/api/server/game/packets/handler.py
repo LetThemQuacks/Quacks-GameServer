@@ -1,8 +1,9 @@
 from typing import Union, List
 
-from .....database.errors import ChatErrors, DataErrors
+from src.database.errors import ChatErrors, DataErrors
 
 from ...types.client import CallbackFilter, CallbacksStorage
+
 
 class PacketsPhases:
     PRE_CRYPTO  = 1

@@ -23,7 +23,7 @@ logging_module.basicConfig(
     level=level,
     format= '%(message)s',
     datefmt='%H:%M:%S',
-    handlers=[RichHandler(markup=True)]
+    handlers=[RichHandler(markup=True, rich_tracebacks=True)]
 )
 
 logging = logging_module.getLogger('rich')

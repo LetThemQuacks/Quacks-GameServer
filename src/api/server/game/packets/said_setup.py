@@ -1,11 +1,11 @@
 from ...client import WebSocketClient
 
-from ....bigboy.integrity import BigBoy
+from src.api.bigboy.integrity import BigBoy
 
 from .handler import PacketHandler, PacketsPhases
-from .....database.errors import CryptoErrors
+from src.database.errors import CryptoErrors
 
-from ....utilities import APIUtils
+from src.api.utilities import APIUtils
 
 from json import dumps
 from core import logging

@@ -2,15 +2,14 @@ from .handler import PacketHandler, QuickFilters
 from ...client import WebSocketClient
 from ...server import WebSocketServer
 
-from .....database.collections.rooms.rooms import RoomsCollection
-from .....database.errors import RoomsErrors
-from .....api.server.game.room import RoomServer
+from src.database.collections.rooms.rooms import RoomsCollection
+from src.database.errors import RoomsErrors
+from src.api.server.game.room import RoomServer
 
 
 from ....utilities import APIUtils
 
 from core import logging
-from json import dumps
 
 from configs import configs
 import time
