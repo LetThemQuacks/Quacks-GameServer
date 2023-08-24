@@ -88,14 +88,17 @@ def on_close(ws, close_status_code, close_msg):
 def on_open(ws):
     global RSA_INSTANCE, public_rsa
 
+    length = 1024
+
     t = time.time()
-    private, public = RSACipher.generateKeys(1354)
+    private, public = RSACipher.generateKeys(length)
     print(f'RSA key generation took {time.time() - t} seconds')
     public_rsa = public
     RSA_INSTANCE = RSACipher(private, public)
     print(public)
     data = json.dumps({'type': 'client_rsa', 'data': {
-        'rsa_key': public
+        'rsa_key': public,
+        'length': length
     }})
     ws.send(data)
 
