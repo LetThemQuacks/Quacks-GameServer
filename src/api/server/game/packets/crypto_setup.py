@@ -18,18 +18,14 @@ def setup_client_cryptography(client: WebSocketClient, data: dict) -> Union[dict
     if client.RSA_INSTANCE and client.AES_INSTANCE:
         return logging.warning(f'{client.addr} Tried to retrive a new AES key.')
 
-    RSA_INSTANCE = RSACipher(publicKey=data.get('rsa_key'))
-    aes_key_length = int(data.get('length', 2048) / 8)
-    if aes_key_length < 128 or aes_key_length > 1024:
-        return APIUtils.error('client_rsa', CryptoErrors.INVALID_KEY_SIZE)
-    aes_key_length -= 42
+    AES_KEY = secrets.token_bytes(1024)
 
-    logging.debug(f'Dynamic AES key length: {aes_key_length}')
-    AES_KEY = secrets.token_urlsafe(aes_key_length)[:aes_key_length]
+    RSA_INSTANCE = RSACipher(publicKey=data.get('rsa_key'))
+    AES_INSTANCE = AESCipher(AES_KEY)
     
     logging.debug(f'Encrypting connection AES key with RSA')
     try:
-        AES_KEY_PROTECTED_RSA = RSA_INSTANCE.encrypt(AES_KEY.encode('utf-8')).decode('utf-8')
+        AES_KEY_PROTECTED_RSA = RSA_INSTANCE.encrypt(AES_INSTANCE.key).decode('utf-8')
     except Exception as e:
         logging.critical(f'Failed to encrypt with RSA the AES key for {client.addr}')
         logging.critical(f'Encryption Error: {e}')
@@ -41,16 +37,13 @@ def setup_client_cryptography(client: WebSocketClient, data: dict) -> Union[dict
         'type': 'server_aes',
         'data': {
             'aes_key': AES_KEY_PROTECTED_RSA,
-            'length': aes_key_length
         }
     }))
 
-    logging.debug('AES key exchange has been successful')
-
     client.RSA_INSTANCE = RSA_INSTANCE
-    client.AES_INSTANCE = AESCipher(AES_KEY)
-    client.INTEGRITY.update({'aes': AES_KEY, 'rsa': data.get('rsa_key')})
+    client.AES_INSTANCE = AES_INSTANCE
+    client.INTEGRITY.update({'aes': AES_INSTANCE.key.hex(), 'rsa': data.get('rsa_key')})
     client.phase = PacketsPhases.PRE_SAID
 
-    logging.info(f'Client Cryptography setup required {time.time() - client.start_time} seconds')
+    logging.info(f'Client Key exchange required {time.time() - client.start_time} seconds')
 

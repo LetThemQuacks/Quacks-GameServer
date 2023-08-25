@@ -38,10 +38,11 @@ def on_message(ws, message):
         print('crypted:', data)
         return
 
-    data = json.loads(message)
     print('raw:', message)
+    data = json.loads(message)
     sys.stdout.write("\033[F")
     if data['type'] == 'server_aes':
+        print(data)
         aes_key = RSA_INSTANCE.decrypt(data['data']['aes_key'])
 
         print(public_rsa)
@@ -49,7 +50,7 @@ def on_message(ws, message):
         response = requests.post(
             BIG_BOY_API + '/said/new',
             json = {
-                'aes': aes_key.decode('utf-8'),
+                'aes': aes_key.hex(),
                 'rsa': public_rsa
             },
             cookies={
@@ -66,7 +67,7 @@ def on_message(ws, message):
             }
         }
 
-        AES_INSTANCE = AESCipher(aes_key.decode('utf-8'))
+        AES_INSTANCE = AESCipher(aes_key)
 
         print(f'send: {json.dumps(said_packet)}')
         ws.send(AES_INSTANCE.encrypt(json.dumps(said_packet)))
@@ -95,7 +96,8 @@ def on_open(ws):
     print(f'RSA key generation took {time.time() - t} seconds')
     public_rsa = public
     RSA_INSTANCE = RSACipher(private, public)
-    print(public)
+    print(f'{public = }')
+    print(f'{private = }')
     data = json.dumps({'type': 'client_rsa', 'data': {
         'rsa_key': public,
         'length': length
