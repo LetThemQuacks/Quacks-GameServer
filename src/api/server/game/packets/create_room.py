@@ -5,7 +5,7 @@ from ...server import WebSocketServer
 from src.database.collections.rooms.rooms import RoomsCollection
 from src.database.errors import RoomsErrors
 from src.api.server.game.room import RoomServer
-
+from src.api.server.types.client import Packet
 
 from ....utilities import APIUtils
 
@@ -22,7 +22,7 @@ def check_ratelimit(start: float, end: float) -> bool:
 
 
 @PacketHandler.handle(packet_type='create_room', filters=[QuickFilters.any_null_value])
-def create_room(client: WebSocketClient, data: dict) -> dict:
+def create_room(client: WebSocketClient, data: dict) -> Packet:
     if not configs['room_creation']['allow']:
         return APIUtils.error('create_room', RoomsErrors.ROOM_CREATION_NOT_ALLOWED)
 

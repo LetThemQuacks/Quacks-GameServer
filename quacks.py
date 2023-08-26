@@ -4,6 +4,7 @@ from src.database.connection import QuacksDatabase
 from src.api.server import WebSocketServer
 from src.api.server.game.room import RoomServer
 from src.api.server.api.rooms import rooms
+from src.api.plugins.controller import PluginController
 from core import logging
 
 import time
@@ -22,12 +23,18 @@ class Quacks:
         
         self.__restore_rooms()
 
+        self.__init_plugins()
+
         self.app.before_request(self.__before_request)
 
         self.app.config['SOCK_SERVER_OPTIONS'] = {'ping_interval': 25}
         self.end_time = time.time()
         self.quacks_setup_time = self.end_time - self.init_time
         logging.info(f'[yellow bold]Quacks[/] is [green italic]ready![/] ( took {round(self.quacks_setup_time, 3)}s )')
+
+    def __init_plugins(self) -> None:
+        self.plugin_controller = PluginController()
+        self.plugin_controller.load_plugins()
 
     def __init_websocket(self) -> None:
         ws = WebSocketServer(self.app)

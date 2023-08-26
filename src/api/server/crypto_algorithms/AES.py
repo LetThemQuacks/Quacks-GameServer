@@ -23,7 +23,9 @@ class AESCipher:
         encrypted_text = b64decode(self._get_string(encrypted_text))
         iv = encrypted_text[:self.block_size]
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        plain_text = cipher.decrypt(encrypted_text[self.block_size:]).decode("utf-8")
+        plain_text = cipher.decrypt(encrypted_text[self.block_size:])
+        print(plain_text)
+        plain_text = plain_text.decode("utf-8")
         return self.__unpad(plain_text)
 
     def __pad(self, plain_text: str) -> str:

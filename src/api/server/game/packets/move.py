@@ -12,11 +12,11 @@ from json import dumps
 def movement(client: WebSocketClient, data: dict) -> None:
     # TODO: update duck physics state using the received data
 
-    client.CURRENT_ROOM.broadcast(dumps({
+    client.CURRENT_ROOM.broadcast({
         'type': 'move',
         'data': {
             'entity_id': client.user_id,
             'state': client.public_physics_state
         }
-    }))
+    })
 

@@ -40,9 +40,9 @@ def on_message(ws, message):
 
     print('raw:', message)
     data = json.loads(message)
-    sys.stdout.write("\033[F")
+
     if data['type'] == 'server_aes':
-        print(data)
+        print('decrypting...')
         aes_key = RSA_INSTANCE.decrypt(data['data']['aes_key'])
 
         print(public_rsa)
@@ -54,7 +54,7 @@ def on_message(ws, message):
                 'rsa': public_rsa
             },
             cookies={
-                'session': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiVHJhcGEiLCJfaWQiOiI2NDQxYWU3MTA3NmE5NTE1MDlmMDJmNjYifSwiaWF0IjoxNjkyNjM3MTQzLCJleHAiOjE2OTI3MjM1NDN9.Q3LxcMsr6HKzeibW7LjzDTF1ef8CSlZ_uWkgFKuLEt4'
+                'session': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiVHJhcGEiLCJfaWQiOiI2NDQxYWU3MTA3NmE5NTE1MDlmMDJmNjYifSwiaWF0IjoxNjkzMDYxNzA3LCJleHAiOjE2OTM2NjY1MDd9.9MbSAqK0wNlmkePZgJVfjsAJZw42wUndKnGPd0gHq-M'
             }
         ).json()
         print(response)
@@ -96,8 +96,7 @@ def on_open(ws):
     print(f'RSA key generation took {time.time() - t} seconds')
     public_rsa = public
     RSA_INSTANCE = RSACipher(private, public)
-    print(f'{public = }')
-    print(f'{private = }')
+
     data = json.dumps({'type': 'client_rsa', 'data': {
         'rsa_key': public,
         'length': length

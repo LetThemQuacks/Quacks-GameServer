@@ -4,6 +4,7 @@ from dataclasses import asdict
 import json
 
 from src.database.collections.rooms.utilities import RoomsDBUtils
+from src.api.server.types.client import Packet
 
 class RoomServer:
     """
@@ -33,7 +34,7 @@ class RoomServer:
 
         self.online_users: List[WebSocketClient] = []
 
-    def broadcast(self, data: str, exceptions: tuple = tuple()):
+    def broadcast(self, data: Packet, exceptions: tuple = tuple()):
         for client in self.online_users:
             if client in exceptions: continue
             client.send(data)

@@ -8,9 +8,10 @@ from core import logging
 from json import dumps
 
 from src.api.utilities import APIUtils
+from src.api.server.types.client import Packet
 
 @PacketHandler.handle(packet_type='join_room')
-def join_room(client: WebSocketClient, data: dict) -> dict:
+def join_room(client: WebSocketClient, data: dict) -> Packet:
     if not data.get('id') in WebSocketServer.rooms_instances:
         return APIUtils.error('join_room', RoomsErrors.ROOM_NOT_FOUND)
 

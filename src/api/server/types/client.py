@@ -13,12 +13,6 @@ Packet = TypedDict('Packet', {
     'data': dict
 })
 
-Error = TypedDict('Error', {
-    'err': bool,
-    'type': str,
-    'msg': str
-})
-
 CallbackDict = TypedDict('Callback', {
     'callback': Callable,
     'filters': List[CallbackFilter]

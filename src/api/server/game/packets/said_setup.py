@@ -28,6 +28,6 @@ def check_client_server_access_id(client: WebSocketClient, data: dict) -> None:
         client.setup_user_info(**intact_response['profile'])
     else:
         logging.warning(f'{client.addr} failed the SAID check, something suspicious is going on')
-        client.send(dumps(APIUtils.error('said', CryptoErrors.INTEGRITY_CHECK_FAILED)))
+        client.send(APIUtils.error('said', CryptoErrors.INTEGRITY_CHECK_FAILED))
         client.ws.close()
 

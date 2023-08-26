@@ -33,12 +33,12 @@ def setup_client_cryptography(client: WebSocketClient, data: dict) -> Union[dict
     else:
         logging.debug('RSA layer succesfully applied on the AES key')
 
-    client.send(json.dumps({
+    client.send({
         'type': 'server_aes',
         'data': {
             'aes_key': AES_KEY_PROTECTED_RSA,
         }
-    }))
+    })
 
     client.RSA_INSTANCE = RSA_INSTANCE
     client.AES_INSTANCE = AES_INSTANCE

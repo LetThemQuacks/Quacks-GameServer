@@ -5,9 +5,9 @@ from base64 import b64encode, b64decode
 from typing import Union
 
 class AESCipher:
-    def __init__(self, key: Union[str, bytes]) -> None:
+    def __init__(self, key: bytes) -> None:
         self.block_size = AES.block_size
-        self.key = hashlib.sha256(key.encode() if isinstance(key, str) else key).digest()
+        self.key = key #hashlib.sha256(key.encode() if isinstance(key, str) else key).digest()
 
     def _get_string(self, value: Union[bytes, str]) -> str:
         return value if isinstance(value, str) else value.decode('utf-8')

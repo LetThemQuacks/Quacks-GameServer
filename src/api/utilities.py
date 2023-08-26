@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from .server.types.client import Error
+from .server.types.client import Packet
 
 class APIUtils:
     @staticmethod
@@ -22,7 +22,7 @@ class APIUtils:
         return True
 
     @staticmethod
-    def error(from_packet_type: str, error_code: str, **additional_data: dict) -> dict:
+    def error(from_packet_type: str, error_code: str, **additional_data: dict) -> Packet:
         """
             Create a Quacks error using the packet type and the error code
         """

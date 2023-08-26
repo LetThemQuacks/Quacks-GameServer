@@ -14,10 +14,12 @@ from .game.room import RoomServer
 from .types.client import Packet
 from typing import Union
 
+from ..plugins.controller import CallbacksStorage, PacketDirection, PluginController
+from ..plugins.events.factory import EventFactory
+
 import threading
 import json
 import time
-import uuid
 
 from simple_websocket.ws import ConnectionClosed
 
@@ -55,10 +57,10 @@ class WebSocketClient:
         for filter_callback in filters:
             result = filter_callback(self, packet)
             if isinstance(result, str):
-                self.send(json.dumps({'type': 'error', 'data': {
+                self.send({'type': 'error', 'data': {
                     'from_packet_type': packet['type'],
                     'code': result
-                }}))
+                }})
                 return False
 
         return True
@@ -80,13 +82,22 @@ class WebSocketClient:
 
     def handle_packets(self):
         while self.connected:
-            loaded: Packet = self.load_packet_json(self.recv())
+            packet: Packet = self.load_packet_json(self.recv())
+
+            event = EventFactory(PacketDirection.FROM_CLIENT, packet, self)
+            if event:
+                CallbacksStorage.iter_callbacks(event)
+
+                if event.ignored:
+                    return
+
+
             try:
-                self._handle_packet(loaded)
+                self._internal_packet_handler(packet)
             except Exception:
-                logging.exception(f'Failed to handle packet: {loaded}')
+                logging.exception(f'Failed to handle packet: {packet}')
  
-    def _handle_packet(self, packet: Packet) -> None:
+    def _internal_packet_handler(self, packet: Packet) -> None:
         callback = PacketHandler.packets_callbacks['type'].get(packet['type'])
         if not callback:
             return
@@ -101,7 +112,7 @@ class WebSocketClient:
             response = self._call_callback(callback, packet)
 
         if isinstance(response, dict):
-            self.send(json.dumps(response))
+            self.send(response)
 
 
     def load_packet_json(self, string: Union[str, None]) -> Packet:
@@ -130,11 +141,19 @@ class WebSocketClient:
 
         return raw_data
 
-    def send(self, data: str):
+    def send(self, data: Packet):
+
+        event = EventFactory(PacketDirection.FROM_SERVER, data, self)
+        if event:
+            CallbacksStorage.iter_callbacks(event)
+
+            if event.ignored:
+                return
+
         try:
             if self.AES_INSTANCE:
-                return self.ws.send(self.AES_INSTANCE.encrypt(data))
-            self.ws.send(data)
+                return self.ws.send(self.AES_INSTANCE.encrypt(json.dumps(data)))
+            self.ws.send(json.dumps(data))
         except ConnectionClosed:
             self.close()
     
