@@ -46,7 +46,7 @@ def setup_client_cryptography(client: WebSocketClient, data: dict) -> Union[dict
 
     client.RSA_INSTANCE = RSA_INSTANCE
     client.AES_INSTANCE = AES_INSTANCE
-    client.INTEGRITY.update({'aes': AES_INSTANCE.key.hex(), 'rsa': data.get('rsa_key')})
+    client.INTEGRITY.update({'aes': base64.b64encode(AES_INSTANCE.key).decode(), 'rsa': data.get('rsa_key')})
     client.phase = PacketsPhases.PRE_SAID
 
     logging.info(f'Client Key exchange required {time.time() - client.start_time} seconds')
