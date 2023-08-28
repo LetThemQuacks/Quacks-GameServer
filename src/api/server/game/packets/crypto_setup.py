@@ -20,8 +20,12 @@ def setup_client_cryptography(client: WebSocketClient, data: dict) -> Union[dict
 
     AES_KEY = secrets.token_bytes(1024)
 
-    RSA_INSTANCE = RSACipher(publicKey=data.get('rsa_key'))
-    AES_INSTANCE = AESCipher(AES_KEY)
+    try:
+        RSA_INSTANCE = RSACipher(publicKey=data.get('rsa_key'))
+        AES_INSTANCE = AESCipher(AES_KEY)
+    except Exception:
+        logging.exception(f'Failed to load AES/RSA Key')
+        return APIUtils.error('client_rsa', CryptoErrors.KEY_LOAD_FAILED)
     
     logging.debug(f'Encrypting connection AES key with RSA')
     try:

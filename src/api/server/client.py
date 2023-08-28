@@ -47,6 +47,7 @@ class WebSocketClient:
         logging.debug(f'WebSocket Connection Arguments: {self.args}')
         logging.debug(f'Running a new packet handler for {self.addr}, Total Threads Count: {threading.active_count()}')
         self.handle_packets()
+        
 
     def setup_user_info(self, user_id: str, username: str, skin: str) -> None:
         self.user_id = user_id
