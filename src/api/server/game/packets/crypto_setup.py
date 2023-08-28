@@ -9,7 +9,7 @@ from src.api.utilities import APIUtils
 
 from typing import Union
 from core import logging
-import json
+import base64
 import time
 import secrets
 
