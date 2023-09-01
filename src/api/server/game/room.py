@@ -74,3 +74,9 @@ class RoomServer:
         client = self.online_users[self.clients_iteration_index]
         self.clients_iteration_index += 1
         return client
+
+    def __getitem__(self, key):
+        for client in self:
+            if client.user_id == key:
+                return client
+        raise KeyError(key)

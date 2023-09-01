@@ -142,7 +142,7 @@ class WebSocketClient:
 
         return raw_data
 
-    def send(self, data: Packet):
+    def send(self, data: Packet) -> bool:
 
         event = EventFactory(PacketDirection.FROM_SERVER, data, self)
         if event:
@@ -157,6 +157,9 @@ class WebSocketClient:
             self.ws.send(json.dumps(data))
         except ConnectionClosed:
             self.close()
+            return False
+        else:
+            return True
     
     def close(self):
         logging.warning(f'Closing connection from {self.addr} ({getattr(self, "user_id", None)})')

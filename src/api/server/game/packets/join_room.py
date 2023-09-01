@@ -21,7 +21,8 @@ def join_room(client: WebSocketClient, data: dict) -> Packet:
         return APIUtils.error('join_room', RoomsErrors.ALREADY_CONNECTED)
 
     if client.user_id in room:
-        return APIUtils.error('join_room', RoomsErrors.ANOTHER_SESSION_CONNECTED)
+        connected = room[client.user_id].send({'type': 'ping', 'data': {}})
+        if connected: return APIUtils.error('join_room', RoomsErrors.ANOTHER_SESSION_CONNECTED)
 
     if client.CURRENT_ROOM:
         old_room = client.CURRENT_ROOM
