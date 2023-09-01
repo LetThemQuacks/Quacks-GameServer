@@ -32,7 +32,7 @@ class RoomServer:
         self.ROOM_ID = room_data['custom_id']
         self.ROOM_DATA = room_data
 
-        self.online_users: List[WebSocketClient] = []
+        self.online_users: list = []
 
     def broadcast(self, data: Packet, exceptions: tuple = tuple()):
         for client in self.online_users:
@@ -40,25 +40,25 @@ class RoomServer:
             client.send(data)
 
     def user_join(self, client):
-        self.broadcast(json.dumps({'type': 'user_join', 'data': {
+        self.broadcast({'type': 'user_join', 'data': {
             'username': client.username,
             'id': client.user_id,
             'skin': client.skin
-        }}), (client,))
+        }}, (client,))
         self.online_users.append(client)
         client.CURRENT_ROOM = self
 
     def user_left(self, client):
         self.online_users.remove(client)
-        self.broadcast(json.dumps({'type': 'user_left', 'data': {
+        self.broadcast({'type': 'user_left', 'data': {
             'id': client.user_id,
-        }}), (client,))
+        }}, (client,))
 
     def user_movement(self, client):
-        self.broadcast(json.dumps({'type': 'move', 'data': {
+        self.broadcast({'type': 'move', 'data': {
             'id': client.user_id,
             'state': client.public_physics_state
-        }}))
+        }})
 
     def online_dict(self, exclude = None):
         return [user.jsonify() for user in self.online_users if user != exclude]
