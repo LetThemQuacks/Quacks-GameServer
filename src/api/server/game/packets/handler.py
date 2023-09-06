@@ -1,6 +1,6 @@
 from typing import Union, List
 
-from src.database.errors import ChatErrors, DataErrors
+from src.database.errors import ChatErrors, DataErrors, RoomsErrors
 
 from ...types.client import CallbackFilter, CallbacksStorage
 
@@ -26,7 +26,7 @@ class QuickFilters:
     def in_room(client, packet) -> Union[str, bool]:
         if client.CURRENT_ROOM:
             return True
-        return ChatErrors.MUST_BE_IN_ROOM
+        return RoomsErrors.MUST_BE_IN_ROOM
 
     @staticmethod
     def any_null_value(client, packet) -> Union[str, bool]:
