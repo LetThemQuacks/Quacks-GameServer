@@ -1,3 +1,7 @@
+hosting:
+  address: "0.0.0.0"
+  port: 5000
+
 database:
   db_name: "PublicQuacks"
 
