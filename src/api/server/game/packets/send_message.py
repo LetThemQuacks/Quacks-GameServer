@@ -7,6 +7,7 @@ from src.api.server.types.client import Packet
 
 from json import dumps
 from typing import Union
+import uuid
 
 @PacketHandler.handle(packet_type='send_message', filters=[QuickFilters.in_room])
 def broadcast_room_message(client: WebSocketClient, data: dict) -> Union[Packet, None]:
@@ -17,6 +18,7 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Union[Packet,
         'type': 'message',
         'data': {
             'content': data.get('message'),
+            'id': str(uuid.uuid4()),
             'author': {
                 'id': client.user_id,
                 'username': client.username
