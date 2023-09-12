@@ -14,7 +14,9 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Union[Packet,
     if data.get('message', '').replace(' ', '') == '':
         return APIUtils.error('send_message', ChatErrors.EMPTY_MESSAGE)
 
-    client.CURRENT_ROOM.broadcast({
+    if not client.CURRENT_ROOM: return
+
+    message_data: Packet = {
         'type': 'message',
         'data': {
             'content': data.get('message'),
@@ -24,4 +26,10 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Union[Packet,
                 'username': client.username
             }
         }
-    })
+    }
+
+    client.CURRENT_ROOM.broadcast(message_data, (client,))
+    message_data['data'].update({'res_id': data.get('req_id')})
+    client.send(message_data)
+
+
