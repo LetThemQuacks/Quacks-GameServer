@@ -2,7 +2,7 @@ from .handler import PacketHandler, QuickFilters
 from ...client import WebSocketClient
 
 from src.api.utilities import APIUtils 
-from src.database.errors import ChatErrors
+from src.database.errors import ChatErrors, RoomsErrors
 from src.api.server.types.client import Packet
 
 from json import dumps
@@ -10,13 +10,14 @@ from typing import Union
 import uuid
 
 @PacketHandler.handle(packet_type='send_message', filters=[QuickFilters.in_room])
-def broadcast_room_message(client: WebSocketClient, data: dict) -> Union[Packet, None]:
+def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
     if data.get('message', '').replace(' ', '') == '':
         return APIUtils.error('send_message', ChatErrors.EMPTY_MESSAGE)
 
-    if not client.CURRENT_ROOM: return
+    if not client.CURRENT_ROOM:
+        return APIUtils.error('send_message', RoomsErrors.MUST_BE_IN_ROOM)
 
-    message_data: Packet = {
+    client.CURRENT_ROOM.broadcast({
         'type': 'message',
         'data': {
             'content': data.get('message'),
@@ -26,10 +27,11 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Union[Packet,
                 'username': client.username
             }
         }
-    }
+    }, (client,))
 
-    client.CURRENT_ROOM.broadcast(message_data, (client,))
-    message_data['data'].update({'res_id': data.get('req_id')})
-    client.send(message_data)
+    return {
+        'type': 'message_confirm',
+        'data': {'res_id': data.get('req_id')}
+    }
 
 
