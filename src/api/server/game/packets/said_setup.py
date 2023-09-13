@@ -7,7 +7,6 @@ from src.database.errors import CryptoErrors
 
 from src.api.utilities import APIUtils
 
-from json import dumps
 from core import logging
 
 @PacketHandler.handle(packet_type='said', working_phase=PacketsPhases.PRE_SAID)

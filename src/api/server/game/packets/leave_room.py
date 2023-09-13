@@ -9,7 +9,7 @@ from src.api.utilities import APIUtils
 from src.api.server.types.client import Packet
 
 @PacketHandler.handle(packet_type='leave_room')
-def leave_room(client: WebSocketClient, data: dict) -> Packet:
+def leave_room(client: WebSocketClient, _) -> Packet:
     if not client.CURRENT_ROOM:
         return APIUtils.error('leave_room', RoomsErrors.MUST_BE_IN_ROOM)
 

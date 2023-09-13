@@ -5,7 +5,6 @@ from ...server import WebSocketServer
 from src.database.errors import RoomsErrors
 
 from core import logging
-from json import dumps
 
 from src.api.utilities import APIUtils
 from src.api.server.types.client import Packet
