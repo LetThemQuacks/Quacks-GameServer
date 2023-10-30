@@ -6,13 +6,14 @@ from core import logging
 from configs import configs
 
 from src.database.collections.rooms.rooms import RoomsCollection
+from src.database.collections.chats.chats import ChatsCollection
 
 import os
 
 load_dotenv()
 
 class QuacksDatabase:
-    DEFAULT_COLLECTIONS: list = ['rooms']
+    DEFAULT_COLLECTIONS: list = ['rooms', 'chats']
     rooms: RoomsCollection
 
     def __init__(self) -> None:
@@ -52,5 +53,6 @@ class QuacksDatabase:
                 logging.info(f'Collection "{collection}" has been created')
 
         self.rooms = RoomsCollection(self.database.rooms)
+        self.chats = ChatsCollection(self.database.chats)
 
         return track

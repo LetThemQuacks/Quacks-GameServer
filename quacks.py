@@ -51,6 +51,7 @@ class Quacks:
             room_data = self.db.rooms._setup_room_data(
                 room['custom_id'], room['name'],
                 room.get('password'), room.get('max_joins'),
+                room.get('chat'),
                 is_password_hash = True
             )
 

@@ -22,7 +22,7 @@ class RoomsDBUtils:
             if not collection.find_one({'custom_id': ID}):
                 break
             else:
-                logging.warning('ID Busy: {ID}, regenerating...')
+                logging.debug('ID Busy: {ID}, regenerating...')
 
         if not ID:
             raise RuntimeError('ID Generation process failed.')

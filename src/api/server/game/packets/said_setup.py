@@ -26,7 +26,7 @@ def check_client_server_access_id(client: WebSocketClient, data: dict) -> None:
         client.phase = PacketsPhases.OPERATIONAL
         client.setup_user_info(**intact_response['profile'])
     else:
-        logging.warning(f'{client.addr} failed the SAID check, something suspicious is going on')
+        logging.warning(f'{client.addr} failed the SAID check, something suspicious is going on: {intact_response}')
         client.send(APIUtils.error('said', CryptoErrors.INTEGRITY_CHECK_FAILED))
         client.ws.close()
 

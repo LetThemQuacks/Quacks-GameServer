@@ -1,3 +1,4 @@
+from src.database.collections.chats.chats import ChatsCollection
 from .handler import PacketHandler
 from ...client import WebSocketClient
 from ...server import WebSocketServer
@@ -31,7 +32,13 @@ def join_room(client: WebSocketClient, data: dict) -> Packet:
 
     logging.info(f'{client.username} ({client.user_id}) has joined {room.ROOM_DATA["name"]} ({room.ROOM_ID})')
 
-    return {'type': 'join_confirm', 'data': {
+
+    join_confirm: Packet = {'type': 'join_confirm', 'data': {
         'online': room.online_dict(exclude=client),
-        'position': [0, 0]
-        }}
+        'position': [0, 0],
+    }}
+
+    if room.chat:
+        join_confirm['data'].update({'messages': ChatsCollection.INSTANCE.get_messages(room.chat, -50)})
+
+    return join_confirm

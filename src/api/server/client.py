@@ -35,6 +35,8 @@ class WebSocketClient:
     connected = True
     last_room_created = 0
     phase = PacketsPhases.PRE_CRYPTO
+    
+    last_room_created: float = 0.0
 
     def __init__(self, ws: Server):
         self.ws = ws

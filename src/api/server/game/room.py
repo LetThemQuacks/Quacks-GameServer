@@ -32,6 +32,8 @@ class RoomServer:
         self.ROOM_ID = room_data['custom_id']
         self.ROOM_DATA = room_data
 
+        self.chat = self.ROOM_DATA.get('chat')
+
         self.online_users: list = []
 
     def broadcast(self, data: Packet, exceptions: tuple = tuple()):

@@ -18,6 +18,9 @@ def check_ratelimit(start: float, end: float) -> bool:
     """
         Returns True if the ratelimit has been reached, otherwise retuns False
     """
+    if not configs['room_creation']['ratelimit']['enable']:
+        return False
+
     return (end - start) < configs['room_creation']['ratelimit']['value']
 
 
@@ -26,7 +29,7 @@ def create_room(client: WebSocketClient, data: dict) -> Packet:
     if not configs['room_creation']['allow']:
         return APIUtils.error('create_room', RoomsErrors.ROOM_CREATION_NOT_ALLOWED)
 
-    if configs['room_creation']['ratelimit']['enable'] and check_ratelimit(client.last_room_created, time.time()):
+    if check_ratelimit(client.last_room_created, time.time()):
         return APIUtils.error(
             'create_room',
             RoomsErrors.RATELIMIT_REACHED,
@@ -36,7 +39,12 @@ def create_room(client: WebSocketClient, data: dict) -> Packet:
 
     logging.info(f'Creating room "{data.get("name")}" author: ({client.user_id}) {client.username} ')
 
-    room_id, room_data = RoomsCollection.INSTANCE.create_room(data['name'], data.get('password'), data.get('max_join'))
+    room_id, room_data = RoomsCollection.INSTANCE.create_room(
+            data['name'], 
+            data.get('password'), 
+            data.get('max_join'),
+            data['ephemeral'] or configs['room_creation']['force_ephemeral'],
+    )
 
     WebSocketServer.rooms_instances[room_data['custom_id']] = RoomServer(
             WebSocketServer.INSTANCE.sock,
