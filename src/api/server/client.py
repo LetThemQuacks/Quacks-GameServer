@@ -93,7 +93,7 @@ class WebSocketClient:
                 CallbacksStorage.iter_callbacks(event)
 
                 if event.ignored:
-                    return
+                    continue
 
 
             try:

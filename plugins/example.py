@@ -5,7 +5,7 @@ from src.api.plugins.controller import CallbacksStorage, SmartCallbacks
 from src.api.plugins.events.packets import Packet2ClientEvent, Packet2ServerEvent
 from core import logging
 
-logging.debug('[green]█[/][white]█[/][red]█[/] [green]UAAAAAAAAAAAA FRATMO SONO IL PLUGIN SONO STATO IMPORTATO[/]')
+logging.debug('[green]█[/][white]█[/][red]█[/] [green][/]')
 
 
 @SmartCallbacks.command('ping')
@@ -23,13 +23,16 @@ def ping_command(event: Packet2ServerEvent):
 
     event.client.send({
         'type': 'message_confirm',
-        'data': {'res_id': event.packet['data'].get('req_id')}
+        'data': {
+            'res_id': event.packet['data'].get('req_id'),
+            'action': 'hide' # Hides the message from the chat
+        }
     })
 
     event.client.send({
         'type': 'message',
         'data': {
-            'content': base64.b64encode(b'ciao').decode(),
+            'content': base64.b64encode(b'Pong!').decode(),
             'id': str(uuid4()),
             'author': {
                 'id': 'ffff',
@@ -37,3 +40,4 @@ def ping_command(event: Packet2ServerEvent):
             }
         }
     })
+
