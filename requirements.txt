@@ -1,0 +1,7 @@
+pymongo
+python-dotenv
+requests
+flask
+flask-sock
+rich
+pycryptodome

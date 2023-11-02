@@ -55,7 +55,7 @@ class RoomServer:
         }}, (client,))
 
         # If there's no chat the room is ephemeral
-        if not self.chat and len(self.online_users) == 0:
+        if not self.chat:
             self.delete()
 
     def user_movement(self, client):

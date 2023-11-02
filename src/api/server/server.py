@@ -1,5 +1,6 @@
 from flask_sock import Sock
 from .client import WebSocketClient
+from configs import configs
 
 class WebSocketServer:
     INSTANCE: 'WebSocketServer'
@@ -18,3 +19,10 @@ class WebSocketServer:
         self.sock = Sock(self.app)
         self.sock.route('/room')(WebSocketClient)
 
+    def send_server_info(self, client: WebSocketClient):
+        client.send({'type': 'server_conf', 'data': {
+            'room_creation': {
+                'allow': configs['room_creation']['allow'],
+                'force_ephemeral': configs['room_creation']['force_ephemeral']
+                }
+            }})

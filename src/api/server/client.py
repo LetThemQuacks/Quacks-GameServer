@@ -86,6 +86,7 @@ class WebSocketClient:
     def handle_packets(self):
         while self.connected:
             packet: Packet = self.load_packet_json(self.recv())
+            logging.debug(f'RECV: {packet}')
 
             event = EventFactory(PacketDirection.FROM_CLIENT, packet, self)
             if event:
@@ -145,7 +146,7 @@ class WebSocketClient:
         return raw_data
 
     def send(self, data: Packet) -> bool:
-
+        logging.debug(f'SEND: {data}')
         event = EventFactory(PacketDirection.FROM_SERVER, data, self)
         if event:
             CallbacksStorage.iter_callbacks(event)
@@ -162,7 +163,7 @@ class WebSocketClient:
             return False
         else:
             return True
-    
+
     def close(self):
         logging.warning(f'Closing connection from {self.addr} ({getattr(self, "user_id", None)})')
         self.connected = False

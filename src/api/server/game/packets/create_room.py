@@ -2,6 +2,7 @@ from .handler import PacketHandler, QuickFilters
 from ...client import WebSocketClient
 from ...server import WebSocketServer
 
+from src.database.collections.chats.chats import ChatsCollection
 from src.database.collections.rooms.rooms import RoomsCollection
 from src.database.errors import RoomsErrors
 from src.api.server.game.room import RoomServer
@@ -38,12 +39,15 @@ def create_room(client: WebSocketClient, data: dict) -> Packet:
 
 
     logging.info(f'Creating room "{data.get("name")}" author: ({client.user_id}) {client.username} ')
+    ephemeral = data['ephemeral'] or configs['room_creation']['force_ephemeral']
+
+    chat_id = ChatsCollection.INSTANCE.create_chat() if not ephemeral else None
 
     room_id, room_data = RoomsCollection.INSTANCE.create_room(
             data['name'], 
             data.get('password'), 
             data.get('max_join'),
-            data['ephemeral'] or configs['room_creation']['force_ephemeral'],
+            chat_id,
     )
 
     WebSocketServer.rooms_instances[room_data['custom_id']] = RoomServer(
