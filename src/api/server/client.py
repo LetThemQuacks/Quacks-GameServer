@@ -29,7 +29,7 @@ null_packet_string  = json.dumps(null_packet)
 class WebSocketClient:
     RSA_INSTANCE: Union[RSACipher, None]  = None
     AES_INSTANCE: Union[AESCipher, None]  = None
-    CURRENT_ROOM: Union[RoomServer, None] = None
+    CURRENT_ROOM: RoomServer = None
     INTEGRITY: dict = {'aes': None, 'rsa': None, 'said': None, 'intact': False}
 
     connected = True

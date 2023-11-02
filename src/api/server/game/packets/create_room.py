@@ -47,8 +47,8 @@ def create_room(client: WebSocketClient, data: dict) -> Packet:
     )
 
     WebSocketServer.rooms_instances[room_data['custom_id']] = RoomServer(
-            WebSocketServer.INSTANCE.sock,
-            room_data=room_data
+            WebSocketServer.INSTANCE,
+            room_data=room_data,
         )
 
     client.last_room_created = time.time()

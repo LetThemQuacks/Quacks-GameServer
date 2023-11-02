@@ -3,7 +3,6 @@ from flask import Flask, request, g
 from src.database.connection import QuacksDatabase
 from src.api.server import WebSocketServer
 from src.api.server.game.room import RoomServer
-from src.api.server.api.rooms import rooms
 from src.api.plugins.controller import PluginController
 from core import logging
 
@@ -19,7 +18,6 @@ class Quacks:
 
         self.__init_database()
         self.__init_websocket()
-        self.__init_blueprints()
         
         self.__restore_rooms()
 
@@ -43,9 +41,6 @@ class Quacks:
     def __init_database(self) -> None:
         self.db = QuacksDatabase()
 
-    def __init_blueprints(self) -> None:
-        self.app.register_blueprint(rooms)
-
     def __restore_rooms(self) -> None:
         for room in self.db.rooms.list_rooms():
             room_data = self.db.rooms._setup_room_data(
@@ -56,7 +51,7 @@ class Quacks:
             )
 
             WebSocketServer.rooms_instances[room['custom_id']] = RoomServer(
-                WebSocketServer.INSTANCE.sock, 
+                WebSocketServer.INSTANCE, 
                 room_data=room_data
             )
 

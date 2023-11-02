@@ -1,9 +1,6 @@
 from flask_sock import Sock
-from typing import List, Any, NewType
-from dataclasses import asdict
-import json
 
-from src.database.collections.rooms.utilities import RoomsDBUtils
+from src.database.collections.rooms.rooms import RoomsCollection
 from src.api.server.types.client import Packet
 
 class RoomServer:
@@ -11,7 +8,7 @@ class RoomServer:
         In-game WebSocket Server for a single Room.
     """
 
-    def __init__(self, sock: Sock, room_data: dict) -> None:
+    def __init__(self, server_instance, room_data: dict) -> None:
         """
             Create a websocket route at /room/<room_id>/ for the specified room.
             
@@ -28,7 +25,8 @@ class RoomServer:
                 ```
 
         """
-        self.sock = sock
+        self.sock: Sock = server_instance.sock
+        self.server_instance = server_instance
         self.ROOM_ID = room_data['custom_id']
         self.ROOM_DATA = room_data
 
@@ -56,11 +54,26 @@ class RoomServer:
             'id': client.user_id,
         }}, (client,))
 
+        # If there's no chat the room is ephemeral
+        if not self.chat and len(self.online_users) == 0:
+            self.delete()
+
     def user_movement(self, client):
         self.broadcast({'type': 'move', 'data': {
             'id': client.user_id,
             'state': client.public_physics_state
         }})
+
+    def delete(self): # I hate circular import errors
+        self.server_instance.rooms_instances.pop(self.ROOM_ID) 
+        RoomsCollection.INSTANCE.delete_room(self.ROOM_ID)
+
+        self.broadcast({
+            'type': 'kick',
+            'data': {
+                'reason': 'ROOM_DELETED'
+            }
+        })
 
     def online_dict(self, exclude = None):
         return [user.jsonify() for user in self.online_users if user != exclude]

@@ -69,3 +69,5 @@ class RoomsCollection:
 
         return list(self.collection.find({}, filter_search))
 
+    def delete_room(self, room_id: str):
+        return self.collection.delete_one({'custom_id': room_id})

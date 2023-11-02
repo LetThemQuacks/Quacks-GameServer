@@ -1,6 +1,6 @@
 from typing import Union, List
 
-from src.database.errors import ChatErrors, DataErrors, RoomsErrors
+from src.database.errors import DataErrors, RoomsErrors
 
 from ...types.client import CallbackFilter, CallbacksStorage
 

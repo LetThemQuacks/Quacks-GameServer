@@ -2,7 +2,7 @@ from .handler import PacketHandler, QuickFilters
 from ...client import WebSocketClient
 
 from src.api.utilities import APIUtils 
-from src.database.errors import ChatErrors, RoomsErrors
+from src.database.errors import ChatErrors
 from src.api.server.types.client import Packet
 
 from src.database.collections.chats.chats import ChatsCollection
