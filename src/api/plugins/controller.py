@@ -1,4 +1,5 @@
 import functools
+import base64
 from typing import List, Callable, Union
 import os
 from src.api.plugins.events.packets.client import Packet2ClientEvent
@@ -127,11 +128,13 @@ class SmartCallbacks:
     
     @staticmethod
     def _command_callback(command_prefix, command_name, callback, event):
-        if event.packet['data']['message'].startswith(f'{command_prefix}{command_name}'):
+        content = base64.b64decode(event.packet['data']['message']).decode('utf-8')
+
+        if content.startswith(f'{command_prefix}{command_name}'):
             callback(event)
 
     @staticmethod
-    def command(name: str, prefix: str = '/'):
+    def command(name: str, prefix: str = ':'):
         def inner(function: Callable):
             CallbacksStorage.ws_event('send_message')(
                 functools.partial(SmartCallbacks._command_callback, prefix, name, function)

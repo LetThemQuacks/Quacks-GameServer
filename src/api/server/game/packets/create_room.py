@@ -39,7 +39,7 @@ def create_room(client: WebSocketClient, data: dict) -> Packet:
 
 
     logging.info(f'Creating room "{data.get("name")}" author: ({client.user_id}) {client.username} ')
-    ephemeral = data['ephemeral'] or configs['room_creation']['force_ephemeral']
+    ephemeral = data.get('ephemeral', False) or configs['room_creation']['force_ephemeral']
 
     chat_id = ChatsCollection.INSTANCE.create_chat() if not ephemeral else None
 

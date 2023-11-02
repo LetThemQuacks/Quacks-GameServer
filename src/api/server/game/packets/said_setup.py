@@ -1,5 +1,5 @@
-from api.server.server import WebSocketServer
-from ...client import WebSocketClient
+from src.api.server.server import WebSocketServer
+from src.api.server.client import WebSocketClient
 
 from src.api.bigboy.integrity import BigBoy
 

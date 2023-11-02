@@ -10,7 +10,9 @@ logging:
 
 room_creation:
   allow: true # allow users to create rooms?
-  force_ephemeral: false # if true every user-room will be deleted when all users left
+  force_ephemeral: false # if true every user-room will be ephemeral
+                         # if a room is ephemeral the messages sent by
+                         # its users will not be saved in the database
 
   ratelimit:
     # Each user can create a room every 5 seconds

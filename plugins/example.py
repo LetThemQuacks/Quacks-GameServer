@@ -1,3 +1,6 @@
+import base64
+import time
+from uuid import uuid4
 from src.api.plugins.controller import CallbacksStorage, SmartCallbacks
 from src.api.plugins.events.packets import Packet2ClientEvent, Packet2ServerEvent
 from core import logging
@@ -20,16 +23,17 @@ def ping_command(event: Packet2ServerEvent):
 
     event.client.send({
         'type': 'message_confirm',
-        'data': {'res_id': event.packet.get('req_id')}
+        'data': {'res_id': event.packet['data'].get('req_id')}
     })
 
     event.client.send({
         'type': 'message',
         'data': {
-            'content': 'Pong!',
+            'content': base64.b64encode(b'ciao').decode(),
+            'id': str(uuid4()),
             'author': {
-                'id': 'ffffffffffffffffffffffff',
-                'username': 'Server Bot'
+                'id': 'ffff',
+                'username': 'Bot'
             }
         }
     })
