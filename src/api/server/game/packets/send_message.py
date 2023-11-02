@@ -4,7 +4,7 @@ from ...client import WebSocketClient
 from src.api.utilities import APIUtils 
 from src.database.errors import ChatErrors
 from src.api.server.types.client import Packet
-
+from src.api.server.game.data.chat import sendMessage
 from src.database.collections.chats.chats import ChatsCollection
 
 import uuid
@@ -19,7 +19,7 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
     client.CURRENT_ROOM.broadcast({
         'type': 'message',
         'data': {
-            'content': 'IlByZXZlbnRzIHlvdSBmcm9tIiBmYSBjYWdhcmVsIGFsIGNhenpv', #data['message'],
+            'content': data['message'],
             'id': msg_id,
             'author': {
                 'id': client.user_id,
@@ -30,10 +30,10 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
 
     if client.CURRENT_ROOM.chat:
         ChatsCollection.INSTANCE.add_message(
-                client.CURRENT_ROOM.chat,
-                msg_id,
-                client.user_id, client.username,
-                data['message']
+            client.CURRENT_ROOM.chat,
+            msg_id,
+            client.user_id, client.username,
+            data['message']
         )
 
 

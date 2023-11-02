@@ -2,6 +2,8 @@ from ._structure import PacketEvent
 
 from src.api.server.types.client import Packet
 
+from core import logging
+
 class Packet2ServerEvent(PacketEvent):
     ignored = False
     direction = 'C2S'

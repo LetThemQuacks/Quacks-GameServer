@@ -1,8 +1,8 @@
 import base64
-import time
 from uuid import uuid4
-from src.api.plugins.controller import CallbacksStorage, SmartCallbacks
-from src.api.plugins.events.packets import Packet2ClientEvent, Packet2ServerEvent
+from src.api.server.game.data.chat import sendMessage
+from src.api.plugins.controller import SmartCallbacks
+from src.api.plugins.events.packets import Packet2ServerEvent
 from core import logging
 
 logging.debug('[green]█[/][white]█[/][red]█[/] [green][/]')
@@ -29,15 +29,5 @@ def ping_command(event: Packet2ServerEvent):
         }
     })
 
-    event.client.send({
-        'type': 'message',
-        'data': {
-            'content': base64.b64encode(b'Pong!').decode(),
-            'id': str(uuid4()),
-            'author': {
-                'id': 'ffff',
-                'username': 'Bot'
-            }
-        }
-    })
+    event.client.send(sendMessage(str(uuid4()), 'Pong!', 'ffff', 'Bot'))
 
