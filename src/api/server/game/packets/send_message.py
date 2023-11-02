@@ -19,7 +19,7 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
     client.CURRENT_ROOM.broadcast({
         'type': 'message',
         'data': {
-            'content': data['message'],
+            'content': 'IlByZXZlbnRzIHlvdSBmcm9tIiBmYSBjYWdhcmVsIGFsIGNhenpv', #data['message'],
             'id': msg_id,
             'author': {
                 'id': client.user_id,
