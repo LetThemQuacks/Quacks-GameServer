@@ -1,6 +1,6 @@
 import base64
 from uuid import uuid4
-from src.api.server.game.data.chat import sendMessage
+from src.api.server.game.data.chat import messageConfirm, sendMessage
 from src.api.plugins.controller import SmartCallbacks
 from src.api.plugins.events.packets import Packet2ServerEvent
 from core import logging
@@ -21,13 +21,7 @@ def ping_command(event: Packet2ServerEvent):
     # NOTE: When the client receives the message confirmation it removes the
     #       Loading state from the message in the UI
 
-    event.client.send({
-        'type': 'message_confirm',
-        'data': {
-            'res_id': event.packet['data'].get('req_id'),
-            'action': 'hide' # Hides the message from the chat
-        }
-    })
+    event.client.send(messageConfirm(event.packet['data'].get('req_id'), str(uuid4()), event.client.color, 'hide'))
 
     event.client.send(sendMessage(str(uuid4()), 'Pong!', 'ffff', 'Bot'))
 

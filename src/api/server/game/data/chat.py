@@ -24,12 +24,14 @@ def sendMessage(msg_id: str, content: Union[str, bytes], author_id: str, usernam
         }
     }
 
-def messageConfirm(req_id: Union[str, None], msg_id: str):
+def messageConfirm(req_id: Union[str, None], msg_id: str, color: str, action: Union[str, None] = None) -> Packet:
     return {
         'type': 'message_confirm',
         'data': {
             'res_id': req_id,
-            'msg_id': msg_id
+            'msg_id': msg_id,
+            'color': color,
+            'action': action
         }
     }
 

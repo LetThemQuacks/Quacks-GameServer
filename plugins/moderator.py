@@ -1,7 +1,7 @@
 import secrets
 import time
 from uuid import uuid4
-from src.api.server.game.data.chat import sendMessage
+from src.api.server.game.data.chat import messageConfirm, sendMessage
 from src.api.plugins.controller import SmartCallbacks
 from src.api.plugins.events.packets.types.message import MessageEvent
 from core import logging
@@ -15,13 +15,7 @@ def kick_command(event: MessageEvent):
 
     event.ignore()
 
-    event.client.send({
-        'type': 'message_confirm',
-        'data': {
-            'res_id': event.packet['data'].get('req_id'),
-            'action': 'hide' # Hides the message from the chat
-        }
-    })
+    event.client.send(messageConfirm(event.packet['data'].get('req_id'), str(uuid4()), event.client.color, 'hide'))
 
     cmd_username = event.message.split(' ')[-1]
 
@@ -34,8 +28,13 @@ def kick_command(event: MessageEvent):
             client.CURRENT_ROOM = None
 
             client.send({'type': 'purge', 'data': {}})
-            client.send(sendMessage(str(uuid4()), "You've been kicked out of this room.", 'ffff', 'Moderator Bot', 'efb820'))
+            client.send(sendMessage(str(uuid4()), "You've been kicked out of this room.", 'ffff', 'Moderator Bot', 'eb4034'))
             break
     else:
         event.client.send(sendMessage(str(uuid4()), f'Nobody is called "{cmd_username}"', 'ffff', 'Moderator Bot'))
 
+@SmartCallbacks.command('clear')
+def clear_chat(event: MessageEvent):
+    if not event.client.CURRENT_ROOM: return
+
+    event.ignore()
