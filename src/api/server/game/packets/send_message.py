@@ -39,7 +39,7 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
 
     return {
         'type': 'message_confirm',
-        'data': {'res_id': data.get('req_id')}
+        'data': {'res_id': data.get('req_id'), 'msg_id': msg_id}
     }
 
 
