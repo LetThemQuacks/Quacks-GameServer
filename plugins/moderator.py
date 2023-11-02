@@ -1,4 +1,5 @@
 import secrets
+import time
 from uuid import uuid4
 from src.api.server.game.data.chat import sendMessage
 from src.api.plugins.controller import SmartCallbacks
@@ -31,6 +32,9 @@ def kick_command(event: MessageEvent):
             event.client.send(sendMessage(str(uuid4()), f'{user} has been kicked out', 'ffff', 'Moderator Bot'))
             event.client.CURRENT_ROOM.user_left(client)
             client.CURRENT_ROOM = None
+
+            client.send({'type': 'purge', 'data': {}})
+            client.send(sendMessage(str(uuid4()), "You've been kicked out of this room.", 'ffff', 'Moderator Bot', 'efb820'))
             break
     else:
         event.client.send(sendMessage(str(uuid4()), f'Nobody is called "{cmd_username}"', 'ffff', 'Moderator Bot'))

@@ -5,6 +5,7 @@ from src.api.utilities import APIUtils
 from src.database.errors import ChatErrors
 from src.api.server.types.client import Packet
 from src.api.server.game.data.chat import sendMessage
+
 from src.database.collections.chats.chats import ChatsCollection
 
 import uuid
@@ -16,17 +17,9 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
 
     msg_id = str(uuid.uuid4())
 
-    client.CURRENT_ROOM.broadcast({
-        'type': 'message',
-        'data': {
-            'content': data['message'],
-            'id': msg_id,
-            'author': {
-                'id': client.user_id,
-                'username': client.username
-            }
-        }
-    }, (client,))
+    client.CURRENT_ROOM.broadcast(
+        sendMessage(msg_id, data['message'], client.user_id, client.username, client.color, True), (client,)
+    )
 
     if client.CURRENT_ROOM.chat:
         ChatsCollection.INSTANCE.add_message(

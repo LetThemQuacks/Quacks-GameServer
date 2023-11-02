@@ -7,15 +7,19 @@ from base64 import b64encode
 
 from src.api.server.types.client import Packet
 
-def sendMessage(msg_id: str, content: Union[str, bytes], author_id: str, username: str) -> Packet:
+def sendMessage(msg_id: str, content: Union[str, bytes], author_id: str, username: str, color: str = 'efb820', encoded: bool = False) -> Packet:
+    if not encoded:
+        content = b64encode(content.encode() if isinstance(content, str) else content).decode()
+
     return {
         'type': 'message',
         'data': {
-            'content': b64encode(content.encode() if isinstance(content, str) else content).decode(),
+            'content': content,
             'id': msg_id,
             'author': {
                 'id': author_id,
-                'username': username
+                'username': username,
+                'color': color
             }
         }
     }

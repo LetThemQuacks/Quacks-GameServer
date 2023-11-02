@@ -20,11 +20,15 @@ from ..plugins.events.factory import EventFactory
 import threading
 import json
 import time
+import random
 
 from simple_websocket.ws import ConnectionClosed
 
 null_packet: Packet = {'type': None, 'data': {}}
 null_packet_string  = json.dumps(null_packet)
+
+def random_color():
+    return ''.join([hex(random.randint(100, 200))[2:] for _ in range(3)])
 
 class WebSocketClient:
     RSA_INSTANCE: Union[RSACipher, None]  = None
@@ -44,6 +48,7 @@ class WebSocketClient:
         self.args = request.args
         self.start_time = time.time()
         self.duck = Duck()
+        self.color = random_color()
 
         logging.info(f'WS Client Connected from {self.addr}')
         logging.debug(f'WebSocket Connection Arguments: {self.args}')
