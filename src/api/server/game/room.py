@@ -31,6 +31,7 @@ class RoomServer:
         self.ROOM_DATA = room_data
 
         self.chat = self.ROOM_DATA.get('chat')
+        self.owner = self.ROOM_DATA['owner']
 
         self.online_users: list = []
 

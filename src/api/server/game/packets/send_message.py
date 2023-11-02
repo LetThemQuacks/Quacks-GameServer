@@ -4,7 +4,7 @@ from ...client import WebSocketClient
 from src.api.utilities import APIUtils 
 from src.database.errors import ChatErrors
 from src.api.server.types.client import Packet
-from src.api.server.game.data.chat import sendMessage
+from src.api.server.game.data.chat import messageConfirm, sendMessage
 
 from src.database.collections.chats.chats import ChatsCollection
 
@@ -29,10 +29,6 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
             data['message']
         )
 
-
-    return {
-        'type': 'message_confirm',
-        'data': {'res_id': data.get('req_id'), 'msg_id': msg_id, 'color': client.color}
-    }
+    return messageConfirm(data.get('req_id'), msg_id, client.color)
 
 

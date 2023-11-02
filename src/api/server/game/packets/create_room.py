@@ -45,9 +45,10 @@ def create_room(client: WebSocketClient, data: dict) -> Packet:
 
     room_id, room_data = RoomsCollection.INSTANCE.create_room(
             data['name'], 
-            data.get('password'), 
+            client.user_id,
+            data.get('password'),
             data.get('max_join'),
-            chat_id,
+            chat_id
     )
 
     WebSocketServer.rooms_instances[room_data['custom_id']] = RoomServer(

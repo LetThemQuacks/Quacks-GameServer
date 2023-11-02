@@ -23,6 +23,7 @@ class RoomsCollection:
 
     def create_room(self,
                     name: str,
+                    owner_id: str,
                     password: Union[str, None] = None,
                     max_joins: Union[int, None] = None,
                     chat_id: Union[ObjectId, None] = None) -> Tuple[str, dict]:
@@ -37,15 +38,16 @@ class RoomsCollection:
 
         room_id = RoomsDBUtils.generate_unique_id(self.collection)
 
-        mongodb_data = self._setup_room_data(room_id, name, password, max_joins, chat_id)
+        mongodb_data = self._setup_room_data(room_id, name, owner_id, password, max_joins, chat_id)
 
         self.collection.insert_one(mongodb_data)
 
         return room_id + str(bool(password).real), mongodb_data
 
-    def _setup_room_data(self, room_id: str, name: str, password: Union[str, None], max_joins: Union[int, None], chat_id: Union[ObjectId, None], is_password_hash: bool = False) -> dict:
+    def _setup_room_data(self, room_id: str, name: str, owner_id: str, password: Union[str, None], max_joins: Union[int, None], chat_id: Union[ObjectId, None], is_password_hash: bool = False) -> dict:
         mongodb_data =  {
             'name': name,
+            'owner': owner_id,
             'custom_id': room_id,
         }
 

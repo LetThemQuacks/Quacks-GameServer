@@ -17,7 +17,13 @@ def kick_command(event: MessageEvent):
 
     event.client.send(messageConfirm(event.packet['data'].get('req_id'), str(uuid4()), event.client.color, 'hide'))
 
+    if event.client.user_id != event.client.CURRENT_ROOM.owner:
+        return event.client.send(sendMessage(str(uuid4()), 'You\'re not an admin', 'ffff', 'Moderator Bot', 'eb4034'))
+
     cmd_username = event.message.split(' ')[-1]
+
+    if cmd_username == event.client.username:
+        return event.client.send(sendMessage(str(uuid4()), 'You can\'t kick yourself out', 'ffff', 'Moderator Bot', 'eb4034'))
 
     for client in event.client.CURRENT_ROOM.online_users:
         user = client.username
@@ -38,3 +44,6 @@ def clear_chat(event: MessageEvent):
     if not event.client.CURRENT_ROOM: return
 
     event.ignore()
+
+    event.client.send(messageConfirm(event.packet['data'].get('req_id'), str(uuid4()), event.client.color, 'hide'))
+    event.client.send({'type': 'purge', 'data': {}})
