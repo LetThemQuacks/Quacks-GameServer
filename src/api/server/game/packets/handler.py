@@ -32,6 +32,6 @@ class QuickFilters:
     def any_null_value(client, packet) -> Union[str, bool]:
         data = packet['data']
         for value in data.values():
-            if not value:
+            if value is None or value == '':
                 return DataErrors.NULL
         return True
