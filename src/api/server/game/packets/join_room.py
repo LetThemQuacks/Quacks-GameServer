@@ -1,6 +1,6 @@
 import hmac
 
-from database.security.hashing import hash_password
+from src.database.security.hashing import hash_password
 from src.database.collections.chats.chats import ChatsCollection
 from .handler import PacketHandler
 from src.api.server.client import WebSocketClient
