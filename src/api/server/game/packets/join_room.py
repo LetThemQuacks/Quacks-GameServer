@@ -20,6 +20,9 @@ def join_room(client: WebSocketClient, data: dict) -> Packet:
 
     room = WebSocketServer.rooms_instances[data.get('id')]
 
+    if room.ROOM_DATA.get('password') and not data.get('password'):
+        return APIUtils.error('join_room', RoomsErrors.PASSWORD_NEEDED)
+
     if room.ROOM_DATA.get('password'):
         pwd_hash = hash_password(data.get('password', ''), room.ROOM_DATA.get('salt'))
 
