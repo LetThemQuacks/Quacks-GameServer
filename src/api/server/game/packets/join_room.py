@@ -1,7 +1,10 @@
+import hmac
+
+from database.security.hashing import hash_password
 from src.database.collections.chats.chats import ChatsCollection
 from .handler import PacketHandler
-from ...client import WebSocketClient
-from ...server import WebSocketServer
+from src.api.server.client import WebSocketClient
+from src.api.server.server import WebSocketServer
 
 from src.database.errors import RoomsErrors
 
@@ -16,6 +19,12 @@ def join_room(client: WebSocketClient, data: dict) -> Packet:
         return APIUtils.error('join_room', RoomsErrors.ROOM_NOT_FOUND)
 
     room = WebSocketServer.rooms_instances[data.get('id')]
+
+    if room.ROOM_DATA.get('password'):
+        pwd_hash = hash_password(data.get('password', ''), room.ROOM_DATA.get('salt'))
+
+        if not hmac.compare_digest(room.ROOM_DATA.get('password'), pwd_hash):
+            return APIUtils.error('join_room', RoomsErrors.INCORRECT_PASSWORD)
 
     if client in room:
         return APIUtils.error('join_room', RoomsErrors.ALREADY_CONNECTED)

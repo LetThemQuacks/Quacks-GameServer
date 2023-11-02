@@ -20,4 +20,3 @@ def hash_password(password: str,
 
     return result_hash.decode()
 
-
