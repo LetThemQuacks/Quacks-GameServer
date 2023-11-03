@@ -43,18 +43,20 @@ class Quacks:
 
     def __restore_rooms(self) -> None:
         for room in self.db.rooms.list_rooms():
-            room_data = self.db.rooms._setup_room_data(
-                room['custom_id'], room['name'], room['owner'],
-                room.get('password'), room.get('max_joins'),
-                room.get('chat'),
-                is_password_hash = True
-            )
+            try:
+                room_data = self.db.rooms._setup_room_data(
+                    room['custom_id'], room['name'], room['owner'],
+                    room.get('password'), room.get('max_joins'),
+                    room.get('chat'),
+                    is_password_hash = True
+                )
 
-            WebSocketServer.rooms_instances[room['custom_id']] = RoomServer(
-                WebSocketServer.INSTANCE, 
-                room_data=room_data
-            )
-
+                WebSocketServer.rooms_instances[room['custom_id']] = RoomServer(
+                    WebSocketServer.INSTANCE, 
+                    room_data=room_data
+                )
+            except Exception as e:
+                logging.error(f'Failed to reestore {room.get("name")} ({room.get("custom_id")}: [red]{e}')
             logging.info(f'Restored Room [blue]->[/] id: [cyan][i]{room["custom_id"]}[/][/] name: [green][i]{room["name"]}[/][/]')
 
 

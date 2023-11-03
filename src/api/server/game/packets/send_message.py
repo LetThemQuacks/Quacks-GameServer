@@ -18,13 +18,7 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
     msg_id = str(uuid.uuid4())
     msg_data = sendMessage(msg_id, data['message'], client.user_id, True)
 
-    client.CURRENT_ROOM.broadcast(msg_data, (client,))
-
-    if client.CURRENT_ROOM.chat:
-        ChatsCollection.INSTANCE.add_message(
-            client.CURRENT_ROOM.chat,
-            msg_data['data']
-        )
+    client.CURRENT_ROOM.send_message(msg_data, (client,))
 
     return messageConfirm(data.get('req_id'), msg_id)
 

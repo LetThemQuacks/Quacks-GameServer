@@ -1,6 +1,8 @@
+from uuid import uuid4
 from flask_sock import Sock
 
 from src.database.collections.rooms.rooms import RoomsCollection
+from src.database.collections.chats.chats import ChatsCollection
 from src.api.server.types.client import Packet
 from src.api.server.game.data.chat import systemMessage
 
@@ -42,7 +44,7 @@ class RoomServer:
             client.send(data)
 
     def user_join(self, client):
-        self.broadcast(systemMessage(f'{client.username} swum here'))
+        self.send_message(systemMessage(str(uuid4()), f'{client.username} swum here'))
 
         self.broadcast({'type': 'user_join', 'data': {
             'username': client.username,
@@ -56,7 +58,7 @@ class RoomServer:
 
     def user_left(self, client):
         self.online_users.remove(client)
-        self.broadcast(systemMessage(f'{client.username} swum away'))
+        self.send_message(systemMessage(str(uuid4()), f'{client.username} swum away'))
 
         self.broadcast({'type': 'user_left', 'data': {
             'id': client.user_id,
@@ -71,6 +73,17 @@ class RoomServer:
             'id': client.user_id,
             'state': client.public_physics_state
         }})
+
+    def send_message(self, msg_data: Packet, exclude=tuple()):
+        self.broadcast(msg_data, exclude)
+
+        if self.chat:
+            ChatsCollection.INSTANCE.add_message(
+                self.chat, {
+                    'type': 'system' if msg_data['type'] == 'system_message' else 'user',
+                    'data': msg_data['data']
+                }
+            )
 
     def delete(self): # I hate circular import errors
         self.server_instance.rooms_instances.pop(self.ROOM_ID) 
