@@ -2,6 +2,7 @@ from flask_sock import Sock
 
 from src.database.collections.rooms.rooms import RoomsCollection
 from src.api.server.types.client import Packet
+from src.api.server.game.data.chat import systemMessage
 
 class RoomServer:
     """
@@ -41,22 +42,27 @@ class RoomServer:
             client.send(data)
 
     def user_join(self, client):
+        self.broadcast(systemMessage(f'{client.username} swum here'))
+
         self.broadcast({'type': 'user_join', 'data': {
             'username': client.username,
             'id': client.user_id,
             'skin': client.skin,
             'color': client.color
         }}, (client,))
+        
         self.online_users.append(client)
         client.CURRENT_ROOM = self
 
     def user_left(self, client):
         self.online_users.remove(client)
+        self.broadcast(systemMessage(f'{client.username} swum away'))
+
         self.broadcast({'type': 'user_left', 'data': {
             'id': client.user_id,
         }}, (client,))
 
-        # If there's no chat the room is ephemeral
+        # If chat is None the room is ephemeral
         if not self.chat:
             self.delete()
 
@@ -78,7 +84,7 @@ class RoomServer:
         })
 
     def online_dict(self, exclude = None):
-        return [user.jsonify() for user in self.online_users if user != exclude]
+        return {user.user_id: user.jsonify() for user in self.online_users if user != exclude}
 
     def __iter__(self):
         self.clients_iteration_index = 0

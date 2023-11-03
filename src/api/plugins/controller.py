@@ -12,6 +12,8 @@ from core import logging
 class PacketDirection: 
     FROM_CLIENT = 'C2S' # Client to Server
     FROM_SERVER = 'S2C' # Server to Client
+    TO_SERVER = 'C2S' # Client to Server
+    TO_CLIENT = 'S2C' # Server to Client
     ALL = '*'
 
     accepted_directions = (FROM_CLIENT, FROM_SERVER, ALL)

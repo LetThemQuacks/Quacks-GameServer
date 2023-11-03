@@ -37,4 +37,11 @@ def messageConfirm(req_id: Union[str, None], msg_id: str, action: Union[str, Non
         }
     }
 
-
+def systemMessage(content: str, color: str = 'efb820') -> Packet:
+    return {
+            'type': 'system_message',
+            'data': {
+                'content': content,
+                'color': color
+                }
+            }
