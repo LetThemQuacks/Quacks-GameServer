@@ -48,6 +48,7 @@ def join_room(client: WebSocketClient, data: dict) -> Packet:
     join_confirm: Packet = {'type': 'join_confirm', 'data': {
         'online': room.online_dict(exclude=client),
         'position': [0, 0],
+        'you': client.jsonify()
     }}
 
     if room.chat:

@@ -16,19 +16,16 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
         return APIUtils.error('send_message', ChatErrors.EMPTY_MESSAGE)
 
     msg_id = str(uuid.uuid4())
+    msg_data = sendMessage(msg_id, data['message'], client.user_id, True)
 
-    client.CURRENT_ROOM.broadcast(
-        sendMessage(msg_id, data['message'], client.user_id, client.username, client.color, True), (client,)
-    )
+    client.CURRENT_ROOM.broadcast(msg_data, (client,))
 
     if client.CURRENT_ROOM.chat:
         ChatsCollection.INSTANCE.add_message(
             client.CURRENT_ROOM.chat,
-            msg_id,
-            client.user_id, client.username,
-            data['message']
+            msg_data['data']
         )
 
-    return messageConfirm(data.get('req_id'), msg_id, client.color)
+    return messageConfirm(data.get('req_id'), msg_id)
 
 

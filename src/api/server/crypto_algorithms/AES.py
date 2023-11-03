@@ -24,7 +24,6 @@ class AESCipher:
         iv = encrypted_text[:self.block_size]
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
         plain_text = cipher.decrypt(encrypted_text[self.block_size:])
-        print(plain_text)
         plain_text = plain_text.decode("utf-8")
         return self.__unpad(plain_text)
 

@@ -184,7 +184,8 @@ class WebSocketClient:
             'id': self.user_id,
             'username': self.username,
             'skin': self.skin,
-            'state': self.public_physics_state
+            'state': self.public_physics_state,
+            'color': self.color
         }
 
     @property

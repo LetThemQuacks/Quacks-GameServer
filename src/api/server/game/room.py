@@ -44,7 +44,8 @@ class RoomServer:
         self.broadcast({'type': 'user_join', 'data': {
             'username': client.username,
             'id': client.user_id,
-            'skin': client.skin
+            'skin': client.skin,
+            'color': client.color
         }}, (client,))
         self.online_users.append(client)
         client.CURRENT_ROOM = self

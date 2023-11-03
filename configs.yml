@@ -6,7 +6,7 @@ database:
   db_name: "PublicQuacks"
 
 logging:
-  level: "DEBUG"
+  level: "INFO"
 
 room_creation:
   allow: true # allow users to create rooms?

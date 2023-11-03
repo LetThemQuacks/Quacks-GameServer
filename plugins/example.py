@@ -23,5 +23,5 @@ def ping_command(event: Packet2ServerEvent):
 
     event.client.send(messageConfirm(event.packet['data'].get('req_id'), str(uuid4()), event.client.color, 'hide'))
 
-    event.client.send(sendMessage(str(uuid4()), 'Pong!', 'ffff', 'Bot'))
+    event.client.send(sendMessage(str(uuid4()), 'Pong!', 'ffff', username='Bot'))
 

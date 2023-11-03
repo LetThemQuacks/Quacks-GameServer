@@ -16,19 +16,15 @@ class ChatsCollection:
             'messages': []
         }).inserted_id
 
-    def add_message(self, chat: ObjectId, msg_id: str, author_id: str, author_name: str, content: str) -> None:
-        self.collection.update_one({'_id': chat}, {'$push': {'messages': {
-            'id': msg_id,
-            'content': content,
-            'timestamp': time.time(),
-            'author': {
-                'name': author_name,
-                'id': author_id
-            }
-        }}})
+    def add_message(self, chat: ObjectId, msg_data: dict) -> None:
+        self.collection.update_one({'_id': chat},
+                                   {'$push': {'messages': msg_data}}
+        )
 
     def get_messages(self, chat_id: ObjectId, start: int = 0, end: float = float('inf')):
         chat = self.collection.find_one({'_id': chat_id}) 
+        if not chat:
+            raise RuntimeError(f'Chat not found: {chat_id}')
 
         if end == float('inf'):
             end = len(chat['messages'])
@@ -36,3 +32,4 @@ class ChatsCollection:
         end = int(end)
 
         return chat['messages'][start:end]
+
