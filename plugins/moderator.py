@@ -12,7 +12,7 @@ from bson import ObjectId
 
 logging.debug('Moderator plugin started')
 
-botMessage = partial(sendMessage, author_id='ffff', username='Moderator Bot')
+botMessage = partial(sendMessage, author_id='ffff', username='Moderator Bot', color='efb820')
 
 @SmartCallbacks.command('kick')
 def kick_command(event: MessageEvent):
