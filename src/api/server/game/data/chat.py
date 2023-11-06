@@ -32,7 +32,6 @@ def sendMessage(msg_id: str, content: Union[str, bytes], author_id: str, encoded
             'content': content,
             'id': msg_id,
             'author': {
-                'type': 'user',
                 'id': author_id
             }
         }
