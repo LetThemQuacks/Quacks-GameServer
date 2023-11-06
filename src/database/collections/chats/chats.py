@@ -18,7 +18,7 @@ class ChatsCollection:
 
     def add_message(self, chat: ObjectId, msg_data: dict) -> None:
         self.collection.update_one({'_id': chat},
-                                   {'$push': {'messages': msg_data}}
+                                   {'$push': {'messages': {'$each': [msg_data], '$position': 0}}}
         )
 
     def get_messages(self, chat_id: ObjectId, start: int = 0, end: float = float('inf')):

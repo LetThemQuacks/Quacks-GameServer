@@ -80,7 +80,7 @@ class RoomServer:
         if self.chat:
             ChatsCollection.INSTANCE.add_message(
                 self.chat, {
-                    'type': 'system' if msg_data['type'] == 'system_message' else 'user',
+                    'type': 'system' if msg_data['type'] == 'system_message' else 'message',
                     'data': msg_data['data']
                 }
             )
