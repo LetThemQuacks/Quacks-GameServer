@@ -56,6 +56,9 @@ class RoomServer:
         self.online_users.append(client)
         client.CURRENT_ROOM = self
 
+        if self.chat:
+            ChatsCollection.INSTANCE.add_user(self.chat, client)
+
     def user_left(self, client):
         self.online_users.remove(client)
         self.send_message(systemMessage(str(uuid4()), f'{client.username} swum away'))
@@ -78,10 +81,12 @@ class RoomServer:
         self.broadcast(msg_data, exclude)
 
         if self.chat:
+            data = msg_data['data']
+            
             ChatsCollection.INSTANCE.add_message(
                 self.chat, {
                     'type': 'system' if msg_data['type'] == 'system_message' else 'message',
-                    'data': msg_data['data']
+                    'data': data
                 }
             )
 
