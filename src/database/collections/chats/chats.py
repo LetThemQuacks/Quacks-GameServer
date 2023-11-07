@@ -17,6 +17,9 @@ class ChatsCollection:
             'authors': {}
         }).inserted_id
 
+    def delete_chat(self, chat: ObjectId):
+        self.collection.delete_one({'_id': chat})
+
     def add_message(self, chat: ObjectId, msg_data: dict) -> None:
         self.collection.update_one({'_id': chat},
                                    {'$push': {'messages': {'$each': [msg_data], '$position': 0}}}

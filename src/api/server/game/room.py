@@ -90,7 +90,7 @@ class RoomServer:
                 }
             )
 
-    def delete(self): # I hate circular import errors
+    def delete(self):
         self.server_instance.rooms_instances.pop(self.ROOM_ID) 
         RoomsCollection.INSTANCE.delete_room(self.ROOM_ID)
 
@@ -100,6 +100,9 @@ class RoomServer:
                 'reason': 'ROOM_DELETED'
             }
         })
+
+        if self.chat:
+            ChatsCollection.INSTANCE.delete_chat(self.chat)
 
     def online_dict(self, exclude = None):
         return {user.user_id: user.jsonify() for user in self.online_users if user != exclude}
