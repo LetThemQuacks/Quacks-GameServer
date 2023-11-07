@@ -8,7 +8,7 @@ from src.api.server.types.client import Packet
 from src.database.collections.chats.chats import ChatsCollection
 
 @PacketHandler.handle(packet_type='delete_message', filters=[QuickFilters.in_room, QuickFilters.has_chat])
-def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
+def delete_message(client: WebSocketClient, data: dict) -> Packet:
     message = ChatsCollection.INSTANCE.find_message(client.CURRENT_ROOM.chat, data['message_id'])
 
     if message is None:

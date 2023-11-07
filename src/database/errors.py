@@ -16,6 +16,7 @@ class RoomsErrors:
 class ChatErrors:
     EMPTY_MESSAGE = 'EMPTY'
     MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND'
+    LOAD_TOO_BIG = 'LOAD_TOO_BIG'
 
 class CryptoErrors:
     INTEGRITY_CHECK_FAILED = 'SAID_INTEGRITY_CHECK_FAILED'
