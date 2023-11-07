@@ -22,4 +22,3 @@ def broadcast_room_message(client: WebSocketClient, data: dict) -> Packet:
 
     return messageConfirm(data.get('req_id'), msg_id)
 
-

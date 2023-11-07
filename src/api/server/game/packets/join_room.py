@@ -52,7 +52,7 @@ def join_room(client: WebSocketClient, data: dict) -> Packet:
     }}
 
     if room.chat:
-        join_confirm['data'].update({'chat': ChatsCollection.INSTANCE.get_messages(room.chat, -50)})
+        join_confirm['data'].update({'chat': ChatsCollection.INSTANCE.get_messages(room.chat, 0, 50)})
         join_confirm['data'].update({'authors': ChatsCollection.INSTANCE.get_authors(room.chat)})
 
     return join_confirm

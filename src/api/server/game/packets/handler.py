@@ -29,6 +29,12 @@ class QuickFilters:
         return RoomsErrors.MUST_BE_IN_ROOM
 
     @staticmethod
+    def has_chat(client, packet) -> Union[str, bool]:
+        if client.CURRENT_ROOM and client.CURRENT_ROOM.chat:
+            return True
+        return RoomsErrors.NO_CHAT
+
+    @staticmethod
     def any_null_value(client, packet) -> Union[str, bool]:
         data = packet['data']
         for value in data.values():

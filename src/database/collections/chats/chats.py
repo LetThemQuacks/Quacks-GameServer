@@ -29,6 +29,27 @@ class ChatsCollection:
             'color': client.color
         }}})
 
+    def find_message(self, chat_id: ObjectId, message_id: str):
+        start = 0
+        found_message = None
+        while True:
+            messages = self.get_messages(chat_id, start, start+50)
+            for message in messages:
+                if message['data']['id'] == message_id:
+                    return found_message
+
+            start += 50
+            if messages == []: break
+
+        return None
+
+    def delete_message(self, chat_id: ObjectId, message: dict):
+        self.collection.update_one({'_id': chat_id}, {
+            '$pull': {
+                'messages': message
+            }
+        })
+
     def get_messages(self, chat_id: ObjectId, start: int = 0, end: float = float('inf')):
         chat = self.collection.find_one({'_id': chat_id}) 
         if not chat:
@@ -38,7 +59,6 @@ class ChatsCollection:
             end = len(chat['messages'])
         
         end = int(end)
-
         return chat['messages'][start:end]
 
     def get_authors(self, chat_id: ObjectId):

@@ -6,6 +6,7 @@ from .handler import PacketHandler, PacketsPhases
 
 from src.database.errors import CryptoErrors
 from src.api.utilities import APIUtils
+from src.api.server.types.client import Packet
 
 from typing import Union
 from core import logging
@@ -14,7 +15,7 @@ import time
 import secrets
 
 @PacketHandler.handle(packet_type='client_rsa', working_phase=PacketsPhases.PRE_CRYPTO)
-def setup_client_cryptography(client: WebSocketClient, data: dict) -> Union[dict, None]:
+def setup_client_cryptography(client: WebSocketClient, data: dict) -> Union[Packet, None]:
     if client.RSA_INSTANCE and client.AES_INSTANCE:
         return logging.warning(f'{client.addr} Tried to retrive a new AES key.')
 
@@ -49,5 +50,5 @@ def setup_client_cryptography(client: WebSocketClient, data: dict) -> Union[dict
     client.INTEGRITY.update({'aes': base64.b64encode(AES_INSTANCE.key).decode(), 'rsa': data.get('rsa_key')})
     client.phase = PacketsPhases.PRE_SAID
 
-    logging.info(f'Client Key exchange required {time.time() - client.start_time} seconds')
+    logging.debug(f'Client Key exchange required {time.time() - client.start_time} seconds')
 
