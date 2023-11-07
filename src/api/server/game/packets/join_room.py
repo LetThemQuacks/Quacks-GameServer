@@ -1,4 +1,5 @@
 import hmac
+import random
 
 from src.database.security.hashing import hash_password
 from src.database.collections.chats.chats import ChatsCollection
@@ -47,7 +48,7 @@ def join_room(client: WebSocketClient, data: dict) -> Packet:
 
     join_confirm: Packet = {'type': 'join_confirm', 'data': {
         'online': room.online_dict(exclude=client),
-        'position': [0, 0],
+        'position': [random.randint(0, 500), random.randint(0, 500)],
         'you': client.jsonify()
     }}
 

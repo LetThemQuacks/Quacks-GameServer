@@ -57,6 +57,10 @@ def clear_chat(event: MessageEvent):
     event.client.send(messageConfirm(event.packet['data'].get('req_id'), str(uuid4())))
     event.client.send({'type': 'purge', 'data': {}})
 
+@SmartCallbacks.command('crash')
+def crash(event: MessageEvent):
+    event.client.send({'type': 'message', 'data': ''})
+
 @SmartCallbacks.command('cleardb')
 def clear_chat_database(event: MessageEvent):
     """
