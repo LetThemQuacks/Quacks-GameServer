@@ -48,7 +48,8 @@ class Quacks:
                     room['custom_id'], room['name'], room['owner'],
                     room.get('password'), room.get('max_joins'),
                     room.get('chat'),
-                    is_password_hash = True
+                    is_password_hash = True,
+                    pwd_salt=room.get('salt')
                 )
 
                 WebSocketServer.rooms_instances[room['custom_id']] = RoomServer(

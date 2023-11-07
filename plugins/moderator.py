@@ -59,7 +59,7 @@ def clear_chat(event: MessageEvent):
 
 @SmartCallbacks.command('crash')
 def crash(event: MessageEvent):
-    event.client.send({'type': 'message', 'data': ''})
+    event.client.send({'type': 'message', 'data': 0})
 
 @SmartCallbacks.command('cleardb')
 def clear_chat_database(event: MessageEvent):

@@ -7,8 +7,6 @@ def hash_password(password: str,
                   salt: Union[bytes, None] = None,
         ) -> str:
 
-    print(f'Hashing password {password}')
-
     work_factors = configs['hashing']['work_factors']
     hashing_function = getattr(hashlib, configs['hashing']['algorithm'])
 

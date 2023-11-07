@@ -44,14 +44,17 @@ class RoomsCollection:
 
         return room_id + str(bool(password).real), mongodb_data
 
-    def _setup_room_data(self, room_id: str, name: str, owner_id: str, password: Union[str, None], max_joins: Union[int, None], chat_id: Union[ObjectId, None], is_password_hash: bool = False) -> dict:
+    def _setup_room_data(self, room_id: str, name: str, owner_id: str, password: Union[str, None], max_joins: Union[int, None], chat_id: Union[ObjectId, None], is_password_hash: bool = False, pwd_salt: Union[bytes, None] = None) -> dict:
+        
         mongodb_data =  {
             'name': name,
             'owner': owner_id,
             'custom_id': room_id,
         }
 
-        pwd_salt = self._generate_pwd_salt() if (self.hashing_enabled and password) else None
+        if pwd_salt is None:
+            pwd_salt = self._generate_pwd_salt() if (self.hashing_enabled and password) else None
+
         pwd_process_function = functools.partial(hash_password, salt=pwd_salt) if not is_password_hash else None
 
         RoomsDBUtils.insert_if_necessary(mongodb_data, 'password', password, process_function=pwd_process_function)
