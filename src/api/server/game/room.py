@@ -37,6 +37,8 @@ class RoomServer:
         self.owner = self.ROOM_DATA['owner']
 
         self.online_users: list = []
+        self.last_position_update = 0.0
+        self.position_updates = {}
 
     def broadcast(self, data: Packet, exceptions: tuple = tuple()):
         for client in self.online_users:

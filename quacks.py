@@ -4,6 +4,7 @@ from src.database.connection import QuacksDatabase
 from src.api.server import WebSocketServer
 from src.api.server.game.room import RoomServer
 from src.api.plugins.controller import PluginController
+import threading
 from core import logging
 
 import time
@@ -29,6 +30,7 @@ class Quacks:
         self.end_time = time.time()
         self.quacks_setup_time = self.end_time - self.init_time
         logging.info(f'[yellow bold]Quacks[/] is [green italic]ready![/] ( took {round(self.quacks_setup_time, 3)}s )')
+        logging.info(f'Running Threads: [yellow]{threading.active_count()}[/]')
 
     def __init_plugins(self) -> None:
         self.plugin_controller = PluginController()
