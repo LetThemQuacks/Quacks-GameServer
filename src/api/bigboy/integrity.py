@@ -19,7 +19,7 @@ class BigBoy:
         try:
             response = urllib.request.urlopen(request)
         except Exception as e:
-            print(e.read())
+            print(e)
             return {'ok': False}
 
         try:
